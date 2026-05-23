@@ -1,3 +1,3 @@
 export default function DetalleProductoPage() {
-  return <div>DetalleProductoPage</div>
+  return <div className="bg-background text-on-surface p-8">DetalleProductoPage</div>
 }
