@@ -4,14 +4,12 @@ import Sidebar from '@/shared/Sidebar'
 
 export default function Layout() {
   return (
-    <div>
+    <div className="min-h-screen bg-background">
+      <Sidebar />
       <Navbar />
-      <div>
-        <Sidebar />
-        <main>
-          <Outlet />
-        </main>
-      </div>
+      <main className="ml-64 mt-16 min-h-[calc(100vh-4rem)] bg-background p-margin-desktop">
+        <Outlet />
+      </main>
     </div>
   )
 }
