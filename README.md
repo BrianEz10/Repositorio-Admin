@@ -84,3 +84,16 @@ feature/
 | `admin`    | CRUD completo sobre todos los recursos        |
 | `empleado` | Solo lectura                                  |
 | `cajero`   | Gestión de estados de pedidos                 |
+
+## PRUEBAS DE LOGIN 
+
+localStorage.setItem('auth-storage', JSON.stringify({
+    state: {
+      user: { id: 1, nombre: "Admin", email: "admin@test.com" },
+      token: "test-token",
+      rol: "admin"
+    },
+    version: 0
+  }))
+
+

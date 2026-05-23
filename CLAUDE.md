@@ -42,3 +42,7 @@ src/
 - No crear lógica en App.tsx, solo entry point
 - No mezclar lógica de store-app en este repo
 - No usar localStorage directamente, siempre a través de Zustand
+## Diseño
+Ver DESIGN.md para el sistema de diseño completo.
+Respetar colores, tipografía, espaciados y filosofía visual.
+Esquinas siempre sharp (0px border-radius salvo excepciones del sistema).
