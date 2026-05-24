@@ -16,7 +16,10 @@ export const createIngredient = async (payload: IngredientFormData): Promise<Ing
   return data
 }
 
-export const updateIngredient = async (id: number, payload: Partial<IngredientFormData>): Promise<Ingredient> => {
+export const updateIngredient = async (
+  id: number,
+  payload: Partial<IngredientFormData>,
+): Promise<Ingredient> => {
   const { data } = await api.put<Ingredient>(`/ingredients/${id}`, payload)
   return data
 }
