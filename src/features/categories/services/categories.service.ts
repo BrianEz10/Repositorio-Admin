@@ -16,7 +16,10 @@ export const createCategory = async (payload: CategoryFormData): Promise<Categor
   return data
 }
 
-export const updateCategory = async (id: number, payload: Partial<CategoryFormData>): Promise<Category> => {
+export const updateCategory = async (
+  id: number,
+  payload: Partial<CategoryFormData>,
+): Promise<Category> => {
   const { data } = await api.put<Category>(`/categories/${id}`, payload)
   return data
 }
