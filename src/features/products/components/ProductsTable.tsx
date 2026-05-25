@@ -8,23 +8,25 @@ import {
   createColumnHelper,
   type SortingState,
 } from '@tanstack/react-table'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { Product } from '@/features/products/types'
-
+import type { UnidadMedida } from '@/features/unidades-medida/types'
 interface Props {
   data: Product[]
   isAdmin: boolean
+  unidades: UnidadMedida[]
   onEdit: (product: Product) => void
   onDelete: (product: Product) => void
   onToggle: (product: Product) => void
 }
-
 const columnHelper = createColumnHelper<Product>()
-
-export default function ProductsTable({ data, isAdmin, onEdit, onDelete, onToggle }: Props) {
+export default function ProductsTable({ data, isAdmin, unidades, onEdit, onDelete, onToggle }: Props) {
   const [globalFilter, setGlobalFilter] = useState('')
   const [sorting, setSorting] = useState<SortingState>([])
-
+  const unidadMap = useMemo(
+    () => new Map(unidades.map((u) => [u.id, u])),
+    [unidades],
+  )
   const columns = [
     columnHelper.display({
       id: 'imagen',
@@ -62,41 +64,28 @@ export default function ProductsTable({ data, isAdmin, onEdit, onDelete, onToggl
         </div>
       ),
     }),
-    columnHelper.display({
-      id: 'categoria',
-      header: 'Categoría',
-      cell: ({ row }) => {
-        const cat = row.original.categorias?.[0]
-        return cat ? (
-          <span className="bg-secondary-container/30 text-on-secondary-container border border-secondary-container/50 px-3 py-1 text-label-sm font-label-sm">
-            {cat.categoriaNombre}
-          </span>
-        ) : (
-          <span className="text-on-surface-variant/40 text-label-sm">Sin categoría</span>
-        )
-      },
-      size: 180,
-    }),
     columnHelper.accessor('precioBase', {
       header: 'Precio',
       cell: (info) => (
         <span className="text-on-surface font-bold text-body-md tabular-nums">
-          ${info.getValue().toFixed(2)}
+          ${(info.getValue() ?? 0).toFixed(2)}
         </span>
       ),
       size: 120,
     }),
-    columnHelper.accessor('tiempoPrepMin', {
-      header: 'Prep.',
+    columnHelper.accessor('stockCantidad', {
+      header: 'Stock',
       cell: (info) => {
-        const val = info.getValue()
-        return val ? (
-          <span className="text-on-surface-variant text-body-md tabular-nums">{val} min</span>
-        ) : (
-          <span className="text-on-surface-variant/40 text-label-sm">—</span>
+        const cantidad = info.getValue()
+        const unidadId = info.row.original.unidadVentaId
+        const unidad = unidadId ? unidadMap.get(unidadId) : null
+        return (
+          <span className="text-on-surface-variant text-body-md tabular-nums">
+            {cantidad}{unidad ? ` ${unidad.simbolo}` : ''}
+          </span>
         )
       },
-      size: 90,
+      size: 120,
     }),
     columnHelper.accessor('disponible', {
       header: 'Estado',
@@ -153,7 +142,6 @@ export default function ProductsTable({ data, isAdmin, onEdit, onDelete, onToggl
         ]
       : []),
   ]
-
   const table = useReactTable({
     data,
     columns,
@@ -171,7 +159,6 @@ export default function ProductsTable({ data, isAdmin, onEdit, onDelete, onToggl
       pagination: { pageSize: 8 },
     },
   })
-
   return (
     <div className="bg-surface-container-low border border-outline-variant/20 overflow-hidden">
       {/* Toolbar */}
@@ -199,7 +186,6 @@ export default function ProductsTable({ data, isAdmin, onEdit, onDelete, onToggl
           </p>
         </div>
       </div>
-
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
@@ -264,7 +250,6 @@ export default function ProductsTable({ data, isAdmin, onEdit, onDelete, onToggl
           </tbody>
         </table>
       </div>
-
       {/* Pagination */}
       {table.getPageCount() > 1 && (
         <div className="p-4 bg-surface-container border-t border-outline-variant/20 flex flex-col md:flex-row justify-between items-center gap-4">

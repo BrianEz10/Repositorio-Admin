@@ -9,39 +9,34 @@ import {
 } from '@/features/products/hooks/useProducts'
 import { useCategories } from '@/features/categorias/hooks/useCategories'
 import { useIngredients } from '@/features/ingredients/hooks/useIngredients'
+import { useUnidadesMedida } from '@/features/unidades-medida/hooks/useUnidadesMedida'
 import type { Product, ProductFormData } from '@/features/products/types'
 import ProductsTable from '@/features/products/components/ProductsTable'
 import ProductFormModal from '@/features/products/components/ProductFormModal'
 import DeleteConfirmModal from '@/features/products/components/DeleteConfirmModal'
-
 export default function ProductosPage() {
   const rol = useAuthStore((s) => s.rol)
   const isAdmin = rol === 'admin'
-
   const { data: products, isLoading, isError, error, refetch } = useProducts()
   const { data: categories } = useCategories()
   const { data: ingredients } = useIngredients()
-
+  const { data: unidades } = useUnidadesMedida()
   const createMutation = useCreateProduct()
   const updateMutation = useUpdateProduct()
   const deleteMutation = useDeleteProduct()
   const toggleMutation = useToggleDisponible()
-
   const [showForm, setShowForm] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null)
-
   /* ── Handlers ── */
   const handleCreate = () => {
     setEditingProduct(null)
     setShowForm(true)
   }
-
   const handleEdit = (product: Product) => {
     setEditingProduct(product)
     setShowForm(true)
   }
-
   const handleFormSubmit = (data: ProductFormData) => {
     if (editingProduct) {
       updateMutation.mutate(
@@ -54,18 +49,15 @@ export default function ProductosPage() {
       })
     }
   }
-
   const handleDeleteConfirm = () => {
     if (!deletingProduct) return
     deleteMutation.mutate(deletingProduct.id, {
       onSuccess: () => setDeletingProduct(null),
     })
   }
-
   const handleToggle = (product: Product) => {
     toggleMutation.mutate({ id: product.id, disponible: !product.disponible })
   }
-
   /* ── Loading ── */
   if (isLoading) {
     return (
@@ -77,7 +69,6 @@ export default function ProductosPage() {
       </div>
     )
   }
-
   /* ── Error ── */
   if (isError) {
     return (
@@ -101,12 +92,10 @@ export default function ProductosPage() {
       </div>
     )
   }
-
   /* ── Estadísticas rápidas ── */
   const total = products?.length ?? 0
   const disponibles = products?.filter((p) => p.disponible).length ?? 0
   const noDisponibles = total - disponibles
-
   return (
     <>
       {/* Header */}
@@ -117,7 +106,6 @@ export default function ProductosPage() {
             Gestión del menú: productos, precios, disponibilidad e ingredientes.
           </p>
         </div>
-
         {isAdmin && (
           <button
             onClick={handleCreate}
@@ -128,7 +116,6 @@ export default function ProductosPage() {
           </button>
         )}
       </div>
-
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-surface-container border border-outline-variant/20 p-4 flex items-center gap-4">
@@ -171,28 +158,27 @@ export default function ProductosPage() {
           </div>
         </div>
       </div>
-
       {/* Table */}
       <ProductsTable
         data={products ?? []}
         isAdmin={isAdmin}
+        unidades={unidades ?? []}
         onEdit={handleEdit}
         onDelete={setDeletingProduct}
         onToggle={handleToggle}
       />
-
       {/* Form Modal */}
       {showForm && (
         <ProductFormModal
           product={editingProduct}
           categories={categories ?? []}
           ingredients={ingredients ?? []}
+          unidades={unidades ?? []}
           onSubmit={handleFormSubmit}
           onClose={() => setShowForm(false)}
           isSubmitting={createMutation.isPending || updateMutation.isPending}
         />
       )}
-
       {/* Delete Modal */}
       {deletingProduct && (
         <DeleteConfirmModal
