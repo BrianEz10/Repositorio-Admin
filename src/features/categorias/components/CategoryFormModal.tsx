@@ -1,25 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { Category, CategoryFormData } from '@/features/categories/types'
-
-const ICON_OPTIONS = [
-  'local_fire_department',
-  'tapas',
-  'wine_bar',
-  'cake',
-  'restaurant',
-  'egg',
-  'local_bar',
-  'star',
-  'ac_unit',
-  'kitchen',
-  'lunch_dining',
-  'ramen_dining',
-  'bakery_dining',
-  'icecream',
-  'coffee',
-  'emoji_food_beverage',
-]
-
+import type { Category, CategoryFormData } from '@/features/categorias/types'
 interface Props {
   category: Category | null
   parentCategories: Category[]
@@ -28,7 +8,6 @@ interface Props {
   onClose: () => void
   isSubmitting: boolean
 }
-
 export default function CategoryFormModal({
   category,
   parentCategories,
@@ -39,37 +18,30 @@ export default function CategoryFormModal({
 }: Props) {
   const isEditing = !!category
   const isSubcategory = isEditing ? category.parent_id !== null : defaultParentId !== null
-
   const [nombre, setNombre] = useState(category?.nombre ?? '')
   const [descripcion, setDescripcion] = useState(category?.descripcion ?? '')
-  const [icono, setIcono] = useState(category?.icono ?? ICON_OPTIONS[0])
-  const [activo, setActivo] = useState(category?.activo ?? true)
+  const [imagenUrl, setImagenUrl] = useState(category?.imagen_url ?? '')
   const [parentId, setParentId] = useState<number | null>(
     category?.parent_id ?? defaultParentId,
   )
-
   useEffect(() => {
     if (category) {
       setNombre(category.nombre)
       setDescripcion(category.descripcion ?? '')
-      setIcono(category.icono)
-      setActivo(category.activo)
+      setImagenUrl(category.imagen_url ?? '')
       setParentId(category.parent_id)
     }
   }, [category])
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!nombre.trim()) return
     onSubmit({
       nombre: nombre.trim(),
       descripcion: descripcion.trim() || undefined,
-      icono,
-      activo,
+      imagen_url: imagenUrl.trim() || undefined,
       parent_id: parentId,
     })
   }
-
   const title = isEditing
     ? isSubcategory
       ? 'Editar Subcategoría'
@@ -77,12 +49,10 @@ export default function CategoryFormModal({
     : isSubcategory
       ? 'Crear Subcategoría'
       : 'Nueva Categoría'
-
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-
       {/* Modal */}
       <div className="relative bg-surface-container border border-outline-variant/20 w-full max-w-lg mx-4 flex flex-col max-h-[90vh] overflow-y-auto">
         {/* Header */}
@@ -95,7 +65,6 @@ export default function CategoryFormModal({
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
-
         {/* Body */}
         <form onSubmit={handleSubmit} className="px-6 py-6 flex flex-col gap-6">
           {/* Categoría padre (solo para subcategorías) */}
@@ -118,7 +87,6 @@ export default function CategoryFormModal({
               </select>
             </div>
           )}
-
           {/* Nombre */}
           <div className="flex flex-col gap-2">
             <label className="text-label-md font-label-md text-on-surface-variant">
@@ -133,7 +101,6 @@ export default function CategoryFormModal({
               className="bg-surface-container-high border border-outline-variant/30 text-on-surface text-body-md px-4 py-3 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-on-surface-variant/40"
             />
           </div>
-
           {/* Descripción */}
           <div className="flex flex-col gap-2">
             <label className="text-label-md font-label-md text-on-surface-variant">
@@ -147,63 +114,31 @@ export default function CategoryFormModal({
               className="bg-surface-container-high border border-outline-variant/30 text-on-surface text-body-md px-4 py-3 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-on-surface-variant/40 resize-none"
             />
           </div>
-
-          {/* Identidad Visual / Icono */}
+          {/* Imagen URL */}
           <div className="flex flex-col gap-2">
             <label className="text-label-md font-label-md text-on-surface-variant">
-              Identidad Visual / Icono
+              URL de Imagen
             </label>
-            <div className="grid grid-cols-8 gap-2">
-              {ICON_OPTIONS.map((icon) => (
-                <button
-                  key={icon}
-                  type="button"
-                  onClick={() => setIcono(icon)}
-                  className={`w-full aspect-square flex items-center justify-center border transition-all cursor-pointer ${
-                    icono === icon
-                      ? 'bg-primary-container/20 border-primary text-primary'
-                      : 'bg-surface-container-high border-outline-variant/20 text-on-surface-variant hover:border-outline hover:text-on-surface'
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-[22px]">{icon}</span>
-                </button>
-              ))}
-            </div>
+            <input
+              type="url"
+              value={imagenUrl}
+              onChange={(e) => setImagenUrl(e.target.value)}
+              placeholder="https://ejemplo.com/imagen.jpg"
+              className="bg-surface-container-high border border-outline-variant/30 text-on-surface text-body-md px-4 py-3 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-on-surface-variant/40"
+            />
+            {imagenUrl && (
+              <div className="mt-2 w-16 h-16 border border-outline-variant/20 overflow-hidden">
+                <img
+                  src={imagenUrl}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none'
+                  }}
+                />
+              </div>
+            )}
           </div>
-
-          {/* Estado */}
-          <div className="flex flex-col gap-3">
-            <label className="text-label-md font-label-md text-on-surface-variant">
-              Estado
-            </label>
-            <div className="flex gap-4">
-              <button
-                type="button"
-                onClick={() => setActivo(true)}
-                className={`flex-1 flex flex-col items-center gap-2 py-4 border transition-all cursor-pointer ${
-                  activo
-                    ? 'bg-tertiary-container/10 border-tertiary text-tertiary'
-                    : 'bg-surface-container-high border-outline-variant/20 text-on-surface-variant hover:border-outline'
-                }`}
-              >
-                <span className={`w-3 h-3 rounded-full ${activo ? 'bg-tertiary' : 'bg-on-surface-variant/30'}`} />
-                <span className="text-label-md font-label-md">Activo</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActivo(false)}
-                className={`flex-1 flex flex-col items-center gap-2 py-4 border transition-all cursor-pointer ${
-                  !activo
-                    ? 'bg-surface-variant/20 border-on-surface-variant text-on-surface'
-                    : 'bg-surface-container-high border-outline-variant/20 text-on-surface-variant hover:border-outline'
-                }`}
-              >
-                <span className={`w-3 h-3 rounded-full ${!activo ? 'bg-on-surface-variant' : 'bg-on-surface-variant/30'}`} />
-                <span className="text-label-md font-label-md">Borrador</span>
-              </button>
-            </div>
-          </div>
-
           {/* Footer */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-outline-variant/20">
             <button

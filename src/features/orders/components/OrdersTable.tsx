@@ -35,7 +35,7 @@ export default function OrdersTable({
 
   const filteredData = useMemo(() => {
     if (statusFilter === 'todos') return data
-    return data.filter((o) => o.estado === statusFilter)
+    return data.filter((o) => o.estadoCodigo === statusFilter)
   }, [data, statusFilter])
 
   const columns = useMemo(
@@ -49,7 +49,7 @@ export default function OrdersTable({
         ),
         size: 110,
       }),
-      columnHelper.accessor('cliente', {
+      columnHelper.accessor('clienteNombre', {
         header: 'Cliente',
         cell: (info) => (
           <span className="text-on-surface font-medium">
@@ -57,7 +57,7 @@ export default function OrdersTable({
           </span>
         ),
       }),
-      columnHelper.accessor('estado', {
+      columnHelper.accessor('estadoCodigo', {
         header: 'Estado',
         cell: (info) => <StatusBadge status={info.getValue()} />,
         size: 180,
@@ -67,7 +67,7 @@ export default function OrdersTable({
         cell: (info) => {
           const items = info.getValue()
           const summary = items
-            .map((i) => `${i.nombre} x${i.cantidad}`)
+            .map((i) => `${i.nombreSnapshot} x${i.cantidad}`)
             .join(', ')
           return (
             <span
@@ -135,7 +135,7 @@ export default function OrdersTable({
           Todos ({data.length})
         </button>
         {ORDER_STATUSES.map((s) => {
-          const count = data.filter((o) => o.estado === s).length
+          const count = data.filter((o) => o.estadoCodigo === s).length
           if (count === 0) return null
           return (
             <button

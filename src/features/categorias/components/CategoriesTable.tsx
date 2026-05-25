@@ -8,8 +8,7 @@ import {
   type ExpandedState,
 } from '@tanstack/react-table'
 import { useState, Fragment } from 'react'
-import type { Category } from '@/features/categories/types'
-
+import type { Category } from '@/features/categorias/types'
 interface Props {
   data: Category[]
   isAdmin: boolean
@@ -17,9 +16,7 @@ interface Props {
   onDelete: (category: Category) => void
   onAddSub: (parentId: number) => void
 }
-
 const columnHelper = createColumnHelper<Category>()
-
 export default function CategoriesTable({
   data,
   isAdmin,
@@ -28,16 +25,13 @@ export default function CategoriesTable({
 }: Props) {
   const [globalFilter, setGlobalFilter] = useState('')
   const [expanded, setExpanded] = useState<ExpandedState>({})
-
   const columns = [
     columnHelper.display({
       id: 'expand',
       header: '',
       cell: ({ row }) => {
         const hasSubs = row.getCanExpand()
-
         if (!hasSubs) return <span className="w-6" />
-
         return (
           <button
             onClick={row.getToggleExpandedHandler()}
@@ -58,19 +52,26 @@ export default function CategoriesTable({
       },
       size: 48,
     }),
-
-    columnHelper.accessor('icono', {
+    columnHelper.accessor('imagen_url', {
       header: '',
-      cell: (info) => (
-        <div className="w-10 h-10 bg-surface-variant/40 border border-outline-variant/20 flex items-center justify-center">
-          <span className="material-symbols-outlined text-on-surface-variant text-[20px]">
-            {info.getValue()}
-          </span>
-        </div>
-      ),
+      cell: (info) => {
+        const url = info.getValue()
+        return url ? (
+          <img
+            src={url}
+            alt=""
+            className="w-10 h-10 object-cover border border-outline-variant/20"
+          />
+        ) : (
+          <div className="w-10 h-10 bg-surface-variant/40 border border-outline-variant/20 flex items-center justify-center">
+            <span className="material-symbols-outlined text-on-surface-variant text-[20px]">
+              category
+            </span>
+          </div>
+        )
+      },
       size: 60,
     }),
-
     columnHelper.accessor('nombre', {
       header: 'Nombre Categoría',
       cell: ({ row, getValue }) => (
@@ -83,7 +84,6 @@ export default function CategoriesTable({
               subdirectory_arrow_right
             </span>
           )}
-
           <span
             className={`text-body-md ${
               row.depth === 0
@@ -96,42 +96,19 @@ export default function CategoriesTable({
         </div>
       ),
     }),
-
     columnHelper.display({
       id: 'items',
-      header: 'Items',
+      header: 'Subcategorías',
       cell: ({ row }) => {
         if (row.depth > 0) return '-'
-
         return (
           <span className="text-on-surface-variant text-body-md">
-            {row.original.subcategorias?.length ?? 0}
-          </span>
-        )
-      },
-      size: 100,
-    }),
-
-    columnHelper.accessor('activo', {
-      header: 'Estado',
-      cell: (info) => {
-        const value = info.getValue()
-
-        return value ? (
-          <span className="inline-flex items-center gap-1.5 bg-tertiary-container/15 text-tertiary border border-tertiary/30 px-3 py-1 text-label-sm font-label-sm uppercase tracking-wider">
-            <span className="w-2 h-2 bg-tertiary rounded-full" />
-            Activo
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1.5 bg-surface-variant/30 text-on-surface-variant border border-outline-variant/30 px-3 py-1 text-label-sm font-label-sm uppercase tracking-wider">
-            <span className="w-2 h-2 bg-on-surface-variant/50 rounded-full" />
-            Borrador
+            {row.original.hijos?.length ?? 0}
           </span>
         )
       },
       size: 140,
     }),
-
     ...(isAdmin
       ? [
           columnHelper.display({
@@ -148,7 +125,6 @@ export default function CategoriesTable({
                     edit
                   </span>
                 </button>
-
                 <button
                   onClick={() => onDelete(info.row.original)}
                   className="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors cursor-pointer"
@@ -165,7 +141,6 @@ export default function CategoriesTable({
         ]
       : []),
   ]
-
   const table = useReactTable({
     data,
     columns,
@@ -178,9 +153,8 @@ export default function CategoriesTable({
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    getSubRows: (row) => row.subcategorias ?? [],
+    getSubRows: (row) => row.hijos ?? [],
   })
-
   return (
     <div className="bg-surface-container-low border border-outline-variant/20 overflow-hidden">
       {/* Toolbar */}
@@ -190,7 +164,6 @@ export default function CategoriesTable({
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/50 text-[20px] pointer-events-none">
               search
             </span>
-
             <input
               type="text"
               placeholder="Buscar categoría..."
@@ -199,9 +172,7 @@ export default function CategoriesTable({
               className="bg-surface-container-high border border-outline-variant/30 text-on-surface text-body-md pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-on-surface-variant/40"
             />
           </div>
-
           <div className="w-px h-4 bg-outline-variant/40" />
-
           <p className="text-label-md font-label-md text-on-surface-variant">
             Mostrando{' '}
             <span className="text-on-surface font-bold">
@@ -211,7 +182,6 @@ export default function CategoriesTable({
           </p>
         </div>
       </div>
-
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
@@ -243,7 +213,6 @@ export default function CategoriesTable({
               </tr>
             ))}
           </thead>
-
           <tbody className="divide-y divide-outline-variant/10">
             {table.getRowModel().rows.length === 0 ? (
               <tr>
@@ -252,7 +221,6 @@ export default function CategoriesTable({
                     <span className="material-symbols-outlined text-[48px] text-on-surface-variant/30">
                       category
                     </span>
-
                     <p className="text-body-md text-on-surface-variant/50">
                       No se encontraron categorías
                     </p>

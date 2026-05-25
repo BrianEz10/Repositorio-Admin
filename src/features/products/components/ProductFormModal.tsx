@@ -1,85 +1,100 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import type { Product, ProductFormData } from '@/features/products/types'
-import type { Category } from '@/features/categories/types'
+import type { Category } from '@/features/categorias/types'
 import type { Ingredient } from '@/features/ingredients/types'
-
+import type { UnidadMedida } from '@/features/unidades-medida/types'
 interface Props {
   product: Product | null
   categories: Category[]
   ingredients: Ingredient[]
+  unidades: UnidadMedida[]
   onSubmit: (data: ProductFormData) => void
   onClose: () => void
   isSubmitting: boolean
 }
-
+const TIPO_LABELS: Record<string, string> = {
+  masa: 'Masa',
+  volumen: 'Volumen',
+  unidad: 'Unidad',
+  area: 'Área',
+}
 export default function ProductFormModal({
   product,
   categories,
   ingredients,
+  unidades,
   onSubmit,
   onClose,
   isSubmitting,
 }: Props) {
   const isEditing = !!product
-
   const [nombre, setNombre] = useState(product?.nombre ?? '')
   const [descripcion, setDescripcion] = useState(product?.descripcion ?? '')
   const [precioBase, setPrecioBase] = useState<number>(product?.precioBase ?? 0)
-  const [tiempoPrepMin, setTiempoPrepMin] = useState<number | null>(product?.tiempoPrepMin ?? null)
+  const [stockCantidad, setStockCantidad] = useState<number>(product?.stockCantidad ?? 0)
   const [imageUrl, setImageUrl] = useState(product?.imagenesUrl?.[0] ?? '')
   const [disponible, setDisponible] = useState(product?.disponible ?? true)
-  const [selectedCatIds, setSelectedCatIds] = useState<number[]>(
-    product?.categorias?.map((c) => c.categoriaId) ?? [],
+  const [selectedCatIds, setSelectedCatIds] = useState<number[]>([])
+  const [selectedIngIds, setSelectedIngIds] = useState<number[]>([])
+  const [unidadVentaId, setUnidadVentaId] = useState<number | null>(
+    product?.unidadVentaId ?? null,
   )
-  const [selectedIngIds, setSelectedIngIds] = useState<number[]>(
-    product?.ingredientes?.map((i) => i.ingredienteId) ?? [],
-  )
-
+  const unidadesByTipo = useMemo(() => {
+    const map: Record<string, UnidadMedida[]> = {}
+    for (const u of unidades) {
+      if (!map[u.tipo]) map[u.tipo] = []
+      map[u.tipo].push(u)
+    }
+    return map
+  }, [unidades])
   useEffect(() => {
     if (product) {
       setNombre(product.nombre)
-      setDescripcion(product.descripcion)
+      setDescripcion(product.descripcion ?? '')
       setPrecioBase(product.precioBase)
-      setTiempoPrepMin(product.tiempoPrepMin)
+      setStockCantidad(product.stockCantidad)
       setImageUrl(product.imagenesUrl?.[0] ?? '')
       setDisponible(product.disponible)
-      setSelectedCatIds(product.categorias?.map((c) => c.categoriaId) ?? [])
-      setSelectedIngIds(product.ingredientes?.map((i) => i.ingredienteId) ?? [])
+      setUnidadVentaId(product.unidadVentaId)
     }
   }, [product])
-
   const toggleCat = (id: number) => {
     setSelectedCatIds((prev) =>
       prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id],
     )
   }
-
   const toggleIng = (id: number) => {
     setSelectedIngIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     )
   }
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!nombre.trim() || precioBase <= 0) return
     onSubmit({
       nombre: nombre.trim(),
-      descripcion: descripcion.trim(),
+      descripcion: descripcion.trim() || undefined,
       precioBase,
       imagenesUrl: imageUrl.trim() ? [imageUrl.trim()] : [],
-      tiempoPrepMin,
+      stockCantidad,
       disponible,
-      categoriaIds: selectedCatIds,
-      ingredienteIds: selectedIngIds,
+      unidadVentaId,
+      categorias: selectedCatIds.map((id, i) => ({
+        categoriaId: id,
+        esPrincipal: i === 0,
+      })),
+      ingredientes: selectedIngIds.map((id) => ({
+        ingredienteId: id,
+        cantidad: 1,
+        unidadMedidaId: 1,
+        esRemovible: false,
+      })),
     })
   }
-
   return (
     <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto py-8">
       {/* Overlay */}
       <div className="fixed inset-0 bg-black/60" onClick={onClose} />
-
       {/* Modal */}
       <div className="relative bg-surface-container border border-outline-variant/20 w-full max-w-3xl mx-4 flex flex-col">
         {/* Header */}
@@ -101,7 +116,6 @@ export default function ProductFormModal({
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
-
         {/* Body */}
         <form onSubmit={handleSubmit} className="overflow-y-auto max-h-[calc(100vh-12rem)]">
           <div className="grid grid-cols-12 gap-gutter p-6">
@@ -112,7 +126,6 @@ export default function ProductFormModal({
                 <h3 className="text-label-md font-label-md text-primary uppercase tracking-widest">
                   Información General
                 </h3>
-
                 {/* Nombre */}
                 <div className="flex flex-col gap-2">
                   <label className="text-label-sm font-label-sm text-on-surface-variant">
@@ -127,7 +140,6 @@ export default function ProductFormModal({
                     className="bg-background border-b border-outline-variant focus:border-primary focus:ring-0 text-body-md py-2 transition-colors placeholder:text-on-surface-variant/40"
                   />
                 </div>
-
                 {/* Descripción */}
                 <div className="flex flex-col gap-2">
                   <label className="text-label-sm font-label-sm text-on-surface-variant">
@@ -141,7 +153,6 @@ export default function ProductFormModal({
                     className="bg-background border border-outline-variant focus:border-primary focus:ring-0 text-body-md p-3 transition-colors resize-none placeholder:text-on-surface-variant/40"
                   />
                 </div>
-
                 {/* Categorías */}
                 <div className="flex flex-col gap-2">
                   <label className="text-label-sm font-label-sm text-on-surface-variant">
@@ -161,9 +172,6 @@ export default function ProductFormModal({
                               : 'bg-surface-container-high border-outline-variant/30 text-on-surface-variant hover:border-outline hover:text-on-surface'
                           }`}
                         >
-                          <span className="material-symbols-outlined text-[16px]">
-                            {cat.icono ?? 'category'}
-                          </span>
                           {cat.nombre}
                           {selected && (
                             <span className="material-symbols-outlined text-[16px]">check</span>
@@ -179,13 +187,11 @@ export default function ProductFormModal({
                   </div>
                 </div>
               </section>
-
-              {/* Precio & Tiempo */}
+              {/* Precio, Stock y Unidad */}
               <section className="bg-surface-container-low p-6 border border-outline-variant/20 flex flex-col gap-6">
                 <h3 className="text-label-md font-label-md text-primary uppercase tracking-widest">
-                  Precio y Preparación
+                  Precio, Stock y Unidad
                 </h3>
-
                 <div className="grid grid-cols-2 gap-6">
                   {/* Precio */}
                   <div className="flex flex-col gap-2">
@@ -208,26 +214,44 @@ export default function ProductFormModal({
                       />
                     </div>
                   </div>
-
-                  {/* Tiempo de preparación */}
+                  {/* Stock */}
                   <div className="flex flex-col gap-2">
                     <label className="text-label-sm font-label-sm text-on-surface-variant">
-                      Tiempo de Preparación (min)
+                      Stock
                     </label>
                     <input
                       type="number"
                       min="0"
-                      value={tiempoPrepMin ?? ''}
-                      onChange={(e) =>
-                        setTiempoPrepMin(e.target.value ? parseInt(e.target.value) : null)
-                      }
-                      placeholder="—"
+                      value={stockCantidad}
+                      onChange={(e) => setStockCantidad(parseInt(e.target.value) || 0)}
+                      placeholder="0"
                       className="bg-background border-b border-outline-variant focus:border-primary focus:ring-0 text-body-md py-2 transition-colors placeholder:text-on-surface-variant/40"
                     />
                   </div>
                 </div>
+                {/* Unidad de venta */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-label-sm font-label-sm text-on-surface-variant">
+                    Unidad de Venta
+                  </label>
+                  <select
+                    value={unidadVentaId ?? ''}
+                    onChange={(e) => setUnidadVentaId(e.target.value ? Number(e.target.value) : null)}
+                    className="bg-background border-b border-outline-variant focus:border-primary focus:ring-0 text-body-md py-2 transition-colors cursor-pointer"
+                  >
+                    <option value="">Sin unidad</option>
+                    {Object.entries(unidadesByTipo).map(([tipo, lista]) => (
+                      <optgroup key={tipo} label={TIPO_LABELS[tipo] ?? tipo}>
+                        {lista.map((u) => (
+                          <option key={u.id} value={u.id}>
+                            {u.nombre} ({u.simbolo})
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
+                  </select>
+                </div>
               </section>
-
               {/* Ingredientes */}
               <section className="bg-surface-container-low p-6 border border-outline-variant/20 flex flex-col gap-4">
                 <h3 className="text-label-md font-label-md text-primary uppercase tracking-widest">
@@ -236,7 +260,6 @@ export default function ProductFormModal({
                 <p className="text-label-sm text-on-surface-variant/60">
                   Seleccioná los ingredientes que componen este producto.
                 </p>
-
                 <div className="grid grid-cols-2 gap-2 max-h-52 overflow-y-auto pr-2">
                   {ingredients.map((ing) => {
                     const selected = selectedIngIds.includes(ing.id)
@@ -284,7 +307,6 @@ export default function ProductFormModal({
                     </p>
                   )}
                 </div>
-
                 {selectedIngIds.length > 0 && (
                   <p className="text-label-sm text-on-surface-variant/60">
                     {selectedIngIds.length} ingrediente(s) seleccionado(s)
@@ -292,7 +314,6 @@ export default function ProductFormModal({
                 )}
               </section>
             </div>
-
             {/* ── Columna derecha: imagen y estado ── */}
             <div className="col-span-12 md:col-span-4 flex flex-col gap-6">
               {/* Imagen */}
@@ -300,7 +321,6 @@ export default function ProductFormModal({
                 <h3 className="text-label-md font-label-md text-primary uppercase tracking-widest">
                   Imagen del Producto
                 </h3>
-
                 <div className="aspect-square bg-surface-variant/40 border border-outline-variant/20 overflow-hidden">
                   {imageUrl ? (
                     <img
@@ -320,7 +340,6 @@ export default function ProductFormModal({
                     </div>
                   )}
                 </div>
-
                 <div className="flex flex-col gap-2">
                   <label className="text-label-sm font-label-sm text-on-surface-variant">
                     URL de la imagen
@@ -334,7 +353,6 @@ export default function ProductFormModal({
                   />
                 </div>
               </section>
-
               {/* Estado */}
               <section className="bg-surface-container-low p-6 border border-outline-variant/20 flex flex-col gap-4">
                 <div className="flex items-center justify-between">
@@ -356,7 +374,6 @@ export default function ProductFormModal({
                     <div className="w-14 h-7 bg-surface-container-highest peer-focus:outline-none peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-container" />
                   </label>
                 </div>
-
                 <div className="flex items-center gap-3 pt-4 border-t border-outline-variant/10">
                   <span
                     className={`w-3 h-3 rounded-full ${
@@ -372,7 +389,6 @@ export default function ProductFormModal({
               </section>
             </div>
           </div>
-
           {/* Footer */}
           <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-outline-variant/20 shrink-0">
             <button

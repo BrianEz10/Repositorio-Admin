@@ -3,12 +3,31 @@ export interface LoginRequest {
   password: string
 }
 
+// Lo que devuelve POST /auth/token
+export interface TokenResponse {
+  access_token: string
+  token_type: string
+}
+
+// Lo que devuelve GET /auth/me
+export interface MeResponse {
+  id: number
+  email: string
+  nombre: string
+  apellido: string
+  celular: string | null
+  roles: string[]
+}
+
+// Lo que devuelve nuestro service unificado (token + me)
+export type Role = 'admin' | 'empleado' | 'cajero'
+
 export interface LoginResponse {
-  token: string
   user: {
     id: number
     nombre: string
     email: string
   }
-  rol: 'admin' | 'empleado' | 'cajero'
+  token: string
+  rol: Role
 }

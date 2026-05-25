@@ -4,26 +4,29 @@ import {
   getOrderById,
   updateOrderStatus,
 } from '@/features/orders/services/orders.service'
-import type { OrderStatus } from '@/features/orders/types'
-
 export const useOrders = () =>
   useQuery({
     queryKey: ['orders'],
     queryFn: getOrders,
   })
-
 export const useOrder = (id: number) =>
   useQuery({
     queryKey: ['orders', id],
     queryFn: () => getOrderById(id),
     enabled: id > 0,
   })
-
 export const useUpdateOrderStatus = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, estado }: { id: number; estado: OrderStatus }) =>
-      updateOrderStatus(id, estado),
+    mutationFn: ({
+      id,
+      estadoHacia,
+      motivo,
+    }: {
+      id: number
+      estadoHacia: string
+      motivo?: string | null
+    }) => updateOrderStatus(id, estadoHacia, motivo),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['orders'] })
     },

@@ -1,51 +1,53 @@
-import { useState, useCallback, useEffect } from 'react'
-import { MOCK_ORDERS } from '@/features/orders/mocks/orders.mock'
+import { useState, useMemo } from 'react'
+import { useOrders, useUpdateOrderStatus } from '@/features/orders/hooks/useOrders'
+import { useClientNames } from '@/features/orders/hooks/useClientNames'
+import { hydrateClientNames } from '@/features/orders/services/admin.service'
 import OrdersTable from '@/features/orders/components/OrdersTable'
 import OrderDetailPanel from '@/features/orders/components/OrderDetailPanel'
-import useAuthStore from '@/store/useAuthStore'
 import type { Order } from '@/features/orders/types'
-
 export default function PedidosPage() {
-  const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS)
+  const { data: orders, isLoading, error } = useOrders()
+  const { mutate: updateStatus } = useUpdateOrderStatus()
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-
-  // ─── Mock auth: auto-login como cajero si no hay sesión ───
-  const token = useAuthStore((s) => s.token)
-  const rol = useAuthStore((s) => s.rol)
-  const login = useAuthStore((s) => s.login)
-
-  useEffect(() => {
-    if (!token) {
-      login(
-        { id: 1, nombre: 'Cajero Demo', email: 'cajero@midnight.dev' },
-        'mock-jwt-token-dev',
-        'cajero',
-      )
-    }
-  }, [token, login])
-  // ─── Fin mock auth ───
-
-  const handleStatusChange = useCallback(
-    (orderId: number, newStatus: Order['estado']) => {
-      setOrders((prev) =>
-        prev.map((o) =>
-          o.id === orderId
-            ? { ...o, estado: newStatus, actualizadoEn: new Date().toISOString() }
-            : o,
-        ),
-      )
-      setSelectedOrder((prev) =>
-        prev && prev.id === orderId
-          ? { ...prev, estado: newStatus, actualizadoEn: new Date().toISOString() }
-          : prev,
-      )
-    },
-    [],
+  const namesMap = useClientNames(orders)
+  const hydratedOrders = useMemo(
+    () => (orders ? hydrateClientNames(orders, namesMap) : []),
+    [orders, namesMap],
   )
-
+  const handleStatusChange = (
+    orderId: number,
+    estadoHacia: string,
+    motivo?: string | null,
+  ) => {
+    updateStatus({ id: orderId, estadoHacia, motivo })
+  }
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-on-surface-variant">Cargando pedidos...</p>
+      </div>
+    )
+  }
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 gap-4">
+        <span className="material-symbols-outlined text-[48px] text-error opacity-60">
+          error_outline
+        </span>
+        <p className="text-body-md text-on-surface-variant">
+          Error al cargar pedidos
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 bg-primary text-on-primary text-label-md font-bold hover:brightness-110 transition-all"
+        >
+          Reintentar
+        </button>
+      </div>
+    )
+  }
   return (
     <div className="flex flex-col gap-6">
-      {/* Header */}
       <div className="flex justify-between items-end">
         <div>
           <h2 className="text-headline-lg text-on-surface font-bold">
@@ -57,19 +59,15 @@ export default function PedidosPage() {
         </div>
         <div className="flex items-center gap-3">
           <span className="text-label-sm text-on-surface-variant bg-surface-container-high px-3 py-1.5 border border-outline-variant/20">
-            ROL: {rol?.toUpperCase()} · MOCK DATA · {orders.length} pedidos
+            {hydratedOrders.length} pedidos
           </span>
         </div>
       </div>
-
-      {/* Tabla */}
       <OrdersTable
-        data={orders}
+        data={hydratedOrders}
         onSelectOrder={setSelectedOrder}
         selectedOrderId={selectedOrder?.id ?? null}
       />
-
-      {/* Panel de detalle */}
       {selectedOrder && (
         <OrderDetailPanel
           order={selectedOrder}

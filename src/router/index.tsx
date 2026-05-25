@@ -4,7 +4,7 @@ import ProtectedRoute from '@/shared/ProtectedRoute'
 import LoginPage from '@/features/auth/page/LoginPage'
 import ProductosPage from '@/features/products/page/ProductosPage'
 import IngredientesPage from '@/features/ingredients/page/IngredientesPage'
-import CategoriasPage from '@/features/categories/page/CategoriasPage'
+import CategoriasPage from '@/features/categorias/page/CategoriasPage'
 import PedidosPage from '@/features/orders/page/PedidosPage'
 
 const router = createBrowserRouter([

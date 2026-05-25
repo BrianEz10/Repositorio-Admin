@@ -1,49 +1,63 @@
 export const ORDER_STATUSES = [
-  'pendiente',
-  'en_preparacion',
-  'listo',
-  'entregado',
-  'cancelado',
+  'PENDIENTE',
+  'CONFIRMADO',
+  'EN_PREP',
+  'EN_CAMINO',
+  'ENTREGADO',
+  'CANCELADO',
 ] as const
-
 export type OrderStatus = (typeof ORDER_STATUSES)[number]
-
-/** Flujo secuencial permitido (sin cancelado, ese es lateral) */
 export const STATUS_FLOW: OrderStatus[] = [
-  'pendiente',
-  'en_preparacion',
-  'listo',
-  'entregado',
+  'PENDIENTE',
+  'CONFIRMADO',
+  'EN_PREP',
+  'EN_CAMINO',
+  'ENTREGADO',
 ]
-
 export const STATUS_LABELS: Record<OrderStatus, string> = {
-  pendiente: 'Pendiente',
-  en_preparacion: 'En Preparación',
-  listo: 'Listo',
-  entregado: 'Entregado',
-  cancelado: 'Cancelado',
+  PENDIENTE: 'Pendiente',
+  CONFIRMADO: 'Confirmado',
+  EN_PREP: 'En Preparación',
+  EN_CAMINO: 'En Camino',
+  ENTREGADO: 'Entregado',
+  CANCELADO: 'Cancelado',
 }
-
 export const STATUS_ICONS: Record<OrderStatus, string> = {
-  pendiente: 'schedule',
-  en_preparacion: 'outdoor_grill',
-  listo: 'moped',
-  entregado: 'check_circle',
-  cancelado: 'cancel',
+  PENDIENTE: 'schedule',
+  CONFIRMADO: 'contract_edit',
+  EN_PREP: 'outdoor_grill',
+  EN_CAMINO: 'local_shipping',
+  ENTREGADO: 'check_circle',
+  CANCELADO: 'cancel',
 }
-
+export const FORMA_PAGO_LABELS: Record<string, string> = {
+  EFECTIVO: 'Efectivo',
+  TARJETA: 'Tarjeta',
+  MERCADOPAGO: 'Mercado Pago',
+  TRANSFERENCIA: 'Transferencia',
+}
 export interface OrderItem {
   productoId: number
-  nombre: string
+  nombreSnapshot: string
   cantidad: number
-  precio: number
+  precioSnapshot: number
+  subtotalSnap: number
+  personalizacion: number[] | null
 }
-
+export interface HistorialEntry {
+  estadoDesde: string | null
+  estadoHacia: string
+  usuarioId: number | null
+  motivo: string | null
+  createdAt: string
+}
 export interface Order {
   id: number
-  cliente: string
-  estado: OrderStatus
-  formaPago: string
+  usuarioId: number
+  clienteNombre: string
+  direccionId: number | null
+  estadoCodigo: OrderStatus
+  formaPagoCodigo: string
   items: OrderItem[]
   subtotal: number
   descuento: number
@@ -51,5 +65,36 @@ export interface Order {
   total: number
   notas: string | null
   creadoEn: string
-  actualizadoEn: string
+  historial: HistorialEntry[]
+}
+export function toCamelCaseOrder(data: any): Order {
+  return {
+    id: data.id,
+    usuarioId: data.usuario_id,
+    clienteNombre: '',
+    direccionId: data.direccion_id,
+    estadoCodigo: data.estado_codigo,
+    formaPagoCodigo: data.forma_pago_codigo,
+    subtotal: data.subtotal,
+    descuento: data.descuento,
+    costoEnvio: data.costo_envio,
+    total: data.total,
+    notas: data.notas,
+    creadoEn: data.created_at,
+    items: (data.detalles ?? []).map((d: any) => ({
+      productoId: d.producto_id,
+      nombreSnapshot: d.nombre_snapshot,
+      cantidad: d.cantidad,
+      precioSnapshot: d.precio_snapshot,
+      subtotalSnap: d.subtotal_snap,
+      personalizacion: d.personalizacion,
+    })),
+    historial: (data.historial ?? []).map((h: any) => ({
+      estadoDesde: h.estado_desde,
+      estadoHacia: h.estado_hacia,
+      usuarioId: h.usuario_id,
+      motivo: h.motivo,
+      createdAt: h.created_at,
+    })),
+  }
 }
