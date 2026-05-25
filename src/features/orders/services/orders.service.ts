@@ -11,7 +11,10 @@ export const getOrderById = async (id: number): Promise<Order> => {
   return data
 }
 
-export const updateOrderStatus = async (id: number, estado: OrderStatus): Promise<Order> => {
+export const updateOrderStatus = async (
+  id: number,
+  estado: OrderStatus,
+): Promise<Order> => {
   const { data } = await api.patch<Order>(`/orders/${id}/status`, { estado })
   return data
 }

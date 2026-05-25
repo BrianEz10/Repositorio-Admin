@@ -16,6 +16,7 @@ export const useOrder = (id: number) =>
   useQuery({
     queryKey: ['orders', id],
     queryFn: () => getOrderById(id),
+    enabled: id > 0,
   })
 
 export const useUpdateOrderStatus = () => {
