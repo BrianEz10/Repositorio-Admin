@@ -37,6 +37,20 @@ export default function IngredientsTable({ data, isAdmin, onEdit, onDelete }: Pr
         <span className="text-on-surface font-bold">{info.getValue()}</span>
       ),
     }),
+    columnHelper.accessor('descripcion', {
+      header: 'Descripción',
+      cell: (info) => {
+        const value = info.getValue()
+        return value ? (
+          <span className="text-on-surface-variant text-body-md line-clamp-2 max-w-xs">
+            {value}
+          </span>
+        ) : (
+          <span className="text-on-surface-variant/30 text-body-md">—</span>
+        )
+      },
+      size: 250,
+    }),
     columnHelper.accessor('es_alergeno', {
       header: 'Alérgeno',
       cell: (info) => {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { Product, ProductFormData } from '@/features/products/types'
-import type { Category } from '@/features/categories/types'
+import type { Category } from '@/features/categorias/types'
 import type { Ingredient } from '@/features/ingredients/types'
 
 interface Props {

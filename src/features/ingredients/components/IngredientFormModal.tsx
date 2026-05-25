@@ -18,6 +18,7 @@ export default function IngredientFormModal({
     defaultValues: {
       nombre: ingredient?.nombre ?? '',
       es_alergeno: ingredient?.es_alergeno ?? false,
+      descripcion: ingredient?.descripcion ?? '',
     },
     onSubmit: async ({ value }) => {
       onSubmit(value)
@@ -94,6 +95,30 @@ export default function IngredientFormModal({
                       {field.state.meta.errors[0]}
                     </p>
                   )}
+                </div>
+              )}
+            </form.Field>
+            {/* Campo: Descripción */}
+            <form.Field
+              name="descripcion"
+            >
+              {(field) => (
+                <div className="flex flex-col gap-2">
+                  <label
+                    htmlFor="descripcion"
+                    className="text-label-md font-label-md text-on-surface-variant"
+                  >
+                    Descripción
+                  </label>
+                  <textarea
+                    id="descripcion"
+                    value={field.state.value ?? ''}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                    placeholder="Descripción opcional del ingrediente..."
+                    rows={3}
+                    className="w-full bg-surface-container-high border border-outline-variant/30 text-on-surface text-body-md px-4 py-3 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-on-surface-variant/40 resize-none"
+                  />
                 </div>
               )}
             </form.Field>

@@ -7,7 +7,7 @@ import {
   useDeleteProduct,
   useToggleDisponible,
 } from '@/features/products/hooks/useProducts'
-import { useCategories } from '@/features/categories/hooks/useCategories'
+import { useCategories } from '@/features/categorias/hooks/useCategories'
 import { useIngredients } from '@/features/ingredients/hooks/useIngredients'
 import type { Product, ProductFormData } from '@/features/products/types'
 import ProductsTable from '@/features/products/components/ProductsTable'

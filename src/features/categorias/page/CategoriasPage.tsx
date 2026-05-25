@@ -5,11 +5,11 @@ import {
   useCreateCategory,
   useUpdateCategory,
   useDeleteCategory,
-} from '@/features/categories/hooks/useCategories'
-import type { Category, CategoryFormData } from '@/features/categories/types'
-import CategoriesTable from '@/features/categories/components/CategoriesTable'
-import CategoryFormModal from '@/features/categories/components/CategoryFormModal'
-import DeleteConfirmModal from '@/features/categories/components/DeleteConfirmModal'
+} from '@/features/categorias/hooks/useCategories'
+import type { Category, CategoryFormData } from '@/features/categorias/types'
+import CategoriesTable from '@/features/categorias/components/CategoriesTable'
+import CategoryFormModal from '@/features/categorias/components/CategoryFormModal'
+import DeleteConfirmModal from '@/features/categorias/components/DeleteConfirmModal'
 
 export default function CategoriasPage() {
   const rol = useAuthStore((s) => s.rol)

@@ -6,7 +6,7 @@ import useAuthStore from '@/store/useAuthStore'
 export default function LoginPage() {
   const navigate = useNavigate()
   const loginStore = useAuthStore((s) => s.login)
-  const token = useAuthStore((s) => s.token)
+  const user = useAuthStore((s) => s.user)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
 
   // si ya está autenticado, redirigir
-  if (token) {
+  if (user) {
     const rol = useAuthStore.getState().rol
     navigate(rol === 'cajero' ? '/pedidos' : '/productos', { replace: true })
     return null
@@ -30,7 +30,6 @@ export default function LoginPage() {
       const res = await login({ email, password })
       loginStore(res.user, res.token, res.rol)
 
-      // redirigir según rol
       if (res.rol === 'cajero') {
         navigate('/pedidos', { replace: true })
       } else {
