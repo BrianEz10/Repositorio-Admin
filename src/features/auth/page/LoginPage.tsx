@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { login } from '@/features/auth/services/auth.service'
 import useAuthStore from '@/store/useAuthStore'
+import { useNavigate, Link } from 'react-router-dom'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -157,6 +157,13 @@ export default function LoginPage() {
             </button>
           </form>
         </div>
+         {/* Link a registro */}
+        <p className="text-center text-body-md text-on-surface-variant">
+          ¿No tenés cuenta?{' '}
+          <Link to="/register" className="text-primary font-medium hover:underline">
+            Registrate
+          </Link>
+        </p>
       </div>
     </div>
   )

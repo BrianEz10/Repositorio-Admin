@@ -6,11 +6,15 @@ import ProductosPage from '@/features/products/page/ProductosPage'
 import IngredientesPage from '@/features/ingredients/page/IngredientesPage'
 import CategoriasPage from '@/features/categorias/page/CategoriasPage'
 import PedidosPage from '@/features/orders/page/PedidosPage'
-
+import RegisterPage from '@/features/auth/page/RegisterPage'
 const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />,
   },
   {
     path: '/',
@@ -44,5 +48,6 @@ const router = createBrowserRouter([
     ],
   },
 ])
+
 
 export default router

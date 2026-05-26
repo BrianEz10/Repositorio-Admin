@@ -15,12 +15,7 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-6">
-        <div className="flex items-center gap-4">
-          <button className="text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 relative">
-            <span className="material-symbols-outlined">notifications</span>
-            <span className="absolute top-0 right-0 w-2 h-2 bg-primary-container rounded-full border border-surface" />
-          </button>
-        </div>
+        
 
         <div className="flex items-center gap-3 cursor-pointer">
           <div className="w-10 h-10 bg-surface-variant flex items-center justify-center overflow-hidden border border-outline-variant/20">
