@@ -2,13 +2,13 @@ import { useState } from 'react'
 import useAuthStore from '@/store/useAuthStore'
 import { STATUS_LABELS, STATUS_ICONS } from '@/features/orders/types'
 import type { OrderStatus } from '@/features/orders/types'
-const TRANSITIONS: Record<OrderStatus, { next?: OrderStatus; canCancel: boolean }> = {
-  PENDIENTE: { next: 'CONFIRMADO', canCancel: true },
-  CONFIRMADO: { next: 'EN_PREP', canCancel: true },
-  EN_PREP: { next: 'EN_CAMINO', canCancel: false },
-  EN_CAMINO: { next: 'ENTREGADO', canCancel: false },
-  ENTREGADO: { canCancel: false },
-  CANCELADO: { canCancel: false },
+const TRANSITIONS: Record<OrderStatus, { next?: OrderStatus; prev?: OrderStatus; canCancel: boolean }> = {
+  PENDIENTE:  { next: 'CONFIRMADO',                      canCancel: true },
+  CONFIRMADO: { next: 'EN_PREP',    prev: 'PENDIENTE',   canCancel: true },
+  EN_PREP:    { next: 'EN_CAMINO',  prev: 'CONFIRMADO',  canCancel: true },
+  EN_CAMINO:  { next: 'ENTREGADO',  prev: 'EN_PREP',     canCancel: true },
+  ENTREGADO:  {                                            canCancel: false },
+  CANCELADO:  {                                            canCancel: false },
 }
 interface StatusControlProps {
   orderId: number
@@ -34,6 +34,11 @@ export default function StatusControl({
       onStatusChange(orderId, transition.next)
     }
   }
+  const handleBack = () => {
+    if (onStatusChange && transition.prev) {
+      onStatusChange(orderId, transition.prev)
+    }
+  }
   const handleCancel = () => {
     if (!motivo.trim()) return
     if (onStatusChange) {
@@ -44,7 +49,7 @@ export default function StatusControl({
   }
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         {transition.next && (
           <button
             onClick={handleForward}
@@ -55,6 +60,15 @@ export default function StatusControl({
             </span>
             Mover a {STATUS_LABELS[transition.next]}
             <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </button>
+        )}
+        {transition.prev && (
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 px-4 py-2.5 border border-outline-variant text-on-surface-variant text-label-md font-bold hover:bg-surface-container-high transition-all"
+          >
+            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            Volver a {STATUS_LABELS[transition.prev]}
           </button>
         )}
         {transition.canCancel && !showMotivo && (
