@@ -1,3 +1,5 @@
+link video : https://drive.google.com/drive/folders/1xywErmmLfCMpkTxa26J6N54uUy7zSkhz?usp=drive_link
+
 # admin-app
 
 Panel de administración de un sistema de pedidos de comida. Permite gestionar productos, ingredientes, categorías y pedidos con control de acceso por roles.
