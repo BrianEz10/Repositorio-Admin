@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { useOrders, useUpdateOrderStatus } from '@/features/orders/hooks/useOrders'
 import { useClientNames } from '@/features/orders/hooks/useClientNames'
 import { hydrateClientNames } from '@/features/orders/services/admin.service'
-import OrdersTable from '@/features/orders/components/OrdersTable'
+import OrdersKanban from '@/features/orders/components/OrdersKanban'
 import OrderDetailPanel from '@/features/orders/components/OrderDetailPanel'
 import type { Order } from '@/features/orders/types'
 export default function PedidosPage() {
@@ -63,8 +63,8 @@ export default function PedidosPage() {
           </span>
         </div>
       </div>
-      <OrdersTable
-        data={hydratedOrders}
+      <OrdersKanban
+        orders={hydratedOrders}
         onSelectOrder={setSelectedOrder}
         selectedOrderId={selectedOrder?.id ?? null}
       />
