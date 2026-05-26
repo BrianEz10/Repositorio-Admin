@@ -34,6 +34,15 @@ const KANBAN_COLUMNS = [
     textColor: 'text-on-surface-variant',
     muted: true,
   },
+  {
+  key: 'CANCELADO',
+  label: 'Cancelados',
+  include: ['CANCELADO'],
+  dotColor: 'bg-error',
+  borderColor: 'border-l-error',
+  textColor: 'text-error',
+  muted: true,
+},
 ]
 function itemsSummary(items: Order['items']): string {
   return items.map((i) => `${i.nombreSnapshot} x${i.cantidad}`).join(', ')

@@ -23,7 +23,7 @@ export interface RegisterRequest {
   celular?: string
   password: string
 }
-// Lo que devuelve nuestro service unificado (token + me)
+
 export type Role = 'admin' | 'empleado' | 'cajero'
 export interface LoginResponse {
   user: {
