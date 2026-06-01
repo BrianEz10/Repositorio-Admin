@@ -21,6 +21,7 @@ export default function CajeroPage() {
     try {
       const pedido = await createPedido({
         forma_pago_codigo: selectedPago,
+        direccion_id: null,
         notas: null,
         items: cart.items.map((i) => ({
           producto_id: i.id,
