@@ -6,6 +6,7 @@ const navItems = [
   { to: '/ingredientes', icon: 'kitchen', label: 'Ingredients' },
   { to: '/categorias', icon: 'category', label: 'Categories' },
   { to: '/pedidos', icon: 'receipt_long', label: 'Orders' },
+  { to: '/cajero', icon: 'point_of_sale', label: 'Cajero' },
 ]
 
 const baseLink =
