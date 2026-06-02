@@ -7,6 +7,7 @@ const navItems = [
   { to: '/categorias', icon: 'category', label: 'Categories' },
   { to: '/pedidos', icon: 'receipt_long', label: 'Orders' },
   { to: '/cajero', icon: 'point_of_sale', label: 'Cajero' },
+  { to: '/admin/usuarios', icon: 'group', label: 'Usuarios', adminOnly: true  }, 
 ]
 
 const baseLink =
@@ -16,6 +17,8 @@ const inactiveLink = `${baseLink} text-on-surface-variant hover:text-on-surface 
 
 export default function Sidebar() {
   const logout = useAuthStore((s) => s.logout)
+  const rol = useAuthStore((s) => s.rol)
+  const isAdmin = rol === 'admin'
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-surface-container border-r border-outline-variant/20 flex flex-col py-stack-lg gap-stack-md z-50">
@@ -41,16 +44,19 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 flex flex-col px-0">
-        {navItems.map(({ to, icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) => (isActive ? activeLink : inactiveLink)}
-          >
-            <span className="material-symbols-outlined">{icon}</span>
-            <span>{label}</span>
-          </NavLink>
-        ))}
+        {navItems.map((item) => {
+          if (item.adminOnly && !isAdmin) return null
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) => (isActive ? activeLink : inactiveLink)}
+            >
+              <span className="material-symbols-outlined">{item.icon}</span>
+              <span>{item.label}</span>
+            </NavLink>
+          )
+        })}
       </nav>
 
       <div className="mt-auto border-t border-outline-variant/10 pt-4">
