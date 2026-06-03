@@ -1,12 +1,14 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Layout from '@/shared/Layout'
 import ProtectedRoute from '@/shared/ProtectedRoute'
+import CajeroPage from '@/features/cajero/page/CajeroPage'
 import LoginPage from '@/features/auth/page/LoginPage'
 import ProductosPage from '@/features/products/page/ProductosPage'
 import IngredientesPage from '@/features/ingredients/page/IngredientesPage'
 import CategoriasPage from '@/features/categorias/page/CategoriasPage'
 import PedidosPage from '@/features/orders/page/PedidosPage'
 import RegisterPage from '@/features/auth/page/RegisterPage'
+import AdminUsersPage from '@/features/admin-users/page/AdminUsersPage'
 const router = createBrowserRouter([
   {
     path: '/login',
@@ -42,6 +44,14 @@ const router = createBrowserRouter([
           {
             path: 'pedidos',
             element: <PedidosPage />,
+          },
+          {
+            path: 'cajero',
+            element: <CajeroPage />,
+          },
+          {
+            path: 'admin/usuarios',
+            element: <AdminUsersPage />,
           },
         ],
       },
