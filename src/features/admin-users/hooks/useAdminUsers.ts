@@ -8,7 +8,7 @@ import {
   getRoles,
 } from '@/features/admin-users/services/admin-users.service'
 import type { AdminUser, AdminUserUpdate } from '@/features/admin-users/types'
-export const useAdminUsers = (params?: { offset?: number; limit?: number; rol?: string }) =>
+export const useAdminUsers = (params?: { page?: number; size?: number; rol?: string }) =>
   useQuery({
     queryKey: ['admin-users', params],
     queryFn: () => getUsers(params),

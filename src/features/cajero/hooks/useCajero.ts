@@ -7,6 +7,11 @@ import {
   getRecentOrders,
 } from '@/features/cajero/services/cajero.service'
 import type { CajeroProduct, CartItem, PedidoCreatePayload } from '@/features/cajero/types'
+
+function personalizacionKey(p: number[] | null): string {
+  return p ? [...p].sort().join(',') : 'default'
+}
+
 export const useCajeroProducts = () =>
   useQuery({
     queryKey: ['cajero-products'],
@@ -34,15 +39,30 @@ export const useCreatePedido = () => {
 }
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>([])
-  const addItem = useCallback((product: CajeroProduct) => {
+  const addItem = useCallback((product: CajeroProduct, personalizacion: number[] | null) => {
     setItems((prev) => {
-      const existing = prev.find((i) => i.id === product.id)
+      const key = personalizacionKey(personalizacion)
+      const existing = prev.find(
+        (i) => i.id === product.id && personalizacionKey(i.personalizacion) === key,
+      )
       if (existing) {
         return prev.map((i) =>
-          i.id === product.id ? { ...i, cantidad: i.cantidad + 1 } : i,
+          i.id === product.id && personalizacionKey(i.personalizacion) === key
+            ? { ...i, cantidad: i.cantidad + 1 }
+            : i,
         )
       }
-      return [...prev, { id: product.id, nombre: product.nombre, precioBase: product.precioBase, cantidad: 1, imagenesUrl: product.imagenesUrl }]
+      return [
+        ...prev,
+        {
+          id: product.id,
+          nombre: product.nombre,
+          precioBase: product.precioBase,
+          cantidad: 1,
+          imagenesUrl: product.imagenesUrl,
+          personalizacion,
+        },
+      ]
     })
   }, [])
   const removeItem = useCallback((productId: number) => {
