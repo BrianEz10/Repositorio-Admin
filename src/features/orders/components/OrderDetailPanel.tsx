@@ -1,4 +1,5 @@
 import type { Order, OrderStatus } from '@/features/orders/types'
+import { FORMA_PAGO_LABELS } from '@/features/orders/types'
 import StatusBadge from '@/features/orders/components/StatusBadge'
 import StatusControl from '@/features/orders/components/StatusControl'
 interface OrderDetailPanelProps {
@@ -58,8 +59,14 @@ export default function OrderDetailPanel({
             </div>
             <div>
               <p className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Forma de Pago</p>
-              <p className="text-body-md text-on-surface">{order.formaPagoCodigo}</p>
+              <p className="text-body-md text-on-surface">{FORMA_PAGO_LABELS[order.formaPagoCodigo] ?? order.formaPagoCodigo}</p>
             </div>
+            {order.nombrePara && (
+              <div>
+                <p className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Para</p>
+                <p className="text-body-md text-on-surface">{order.nombrePara}</p>
+              </div>
+            )}
             <div>
               <p className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Hora</p>
               <p className="text-body-md text-on-surface">
@@ -81,6 +88,12 @@ export default function OrderDetailPanel({
                     <p className="text-label-sm text-on-surface-variant">
                       x{item.cantidad} · ${item.precioSnapshot.toFixed(2)} c/u
                     </p>
+                    {item.personalizacionNombres && item.personalizacionNombres.length > 0 && (
+                      <p className="text-label-xs text-tertiary mt-1 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[12px]">tune</span>
+                        Sin: {item.personalizacionNombres.join(', ')}
+                      </p>
+                    )}
                   </div>
                   <span className="text-on-surface font-bold ml-4">
                     ${(item.cantidad * item.precioSnapshot).toFixed(2)}
@@ -112,6 +125,18 @@ export default function OrderDetailPanel({
               <span>${order.total.toFixed(2)}</span>
             </div>
           </div>
+          {/* Dirección */}
+          {order.direccionId && (
+            <div>
+              <h4 className="text-label-md text-on-surface-variant uppercase tracking-wider mb-2 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px]">location_on</span>
+                Dirección de Entrega
+              </h4>
+              <p className="text-body-md text-on-surface bg-surface-container-high/50 px-4 py-3 border border-outline-variant/10">
+                ID #{order.direccionId}
+              </p>
+            </div>
+          )}
           {/* Notas */}
           {order.notas && (
             <div>

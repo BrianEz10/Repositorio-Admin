@@ -4,6 +4,8 @@ interface CartPanelProps {
   formasPago: FormaPago[]
   selectedPago: string
   onSelectPago: (codigo: string) => void
+  clienteNombre: string
+  onClienteNombreChange: (nombre: string) => void
   onUpdateQuantity: (productId: number, cantidad: number) => void
   onRemoveItem: (productId: number) => void
   subtotal: number
@@ -12,7 +14,7 @@ interface CartPanelProps {
   onCreateOrder: () => void
 }
 export default function CartPanel({
-  items, formasPago, selectedPago, onSelectPago,
+  items, formasPago, selectedPago, onSelectPago, clienteNombre, onClienteNombreChange,
   onUpdateQuantity, onRemoveItem, subtotal, isEmpty, isSubmitting, onCreateOrder,
 }: CartPanelProps) {
   return (
@@ -31,11 +33,17 @@ export default function CartPanel({
             <p className="text-body-md text-on-surface-variant/60 text-center">Seleccioná productos para comenzar</p>
           </div>
         ) : (
-          items.map((item) => (
-            <div key={item.id} className="bg-surface-container-high border border-outline-variant/10 p-3 flex items-center gap-3">
+          items.map((item, idx) => (
+            <div key={`${item.id}-${idx}`} className="bg-surface-container-high border border-outline-variant/10 p-3 flex items-center gap-3">
               <div className="flex-1 min-w-0">
                 <p className="text-body-md text-on-surface font-medium truncate">{item.nombre}</p>
                 <p className="text-label-sm text-on-surface-variant">${item.precioBase.toFixed(2)} c/u</p>
+                {item.personalizacion && item.personalizacion.length > 0 && (
+                  <p className="text-label-xs text-tertiary mt-0.5 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[12px]">tune</span>
+                    {item.personalizacion.length} modificación{item.personalizacion.length > 1 ? 'es' : ''}
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-1">
                 <button
@@ -70,6 +78,18 @@ export default function CartPanel({
           <span>Total</span>
           <span>${subtotal.toFixed(2)}</span>
         </div>
+        <div>
+          <label className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1 block">
+            Nombre / Para quién es
+          </label>
+          <input
+            type="text"
+            value={clienteNombre}
+            onChange={(e) => onClienteNombreChange(e.target.value)}
+            placeholder="Ej: Juan Pérez, Mesa 5"
+            className="w-full bg-surface border border-outline-variant/30 px-3 py-2.5 text-body-md text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary/50"
+          />
+        </div>
         <select
           value={selectedPago}
           onChange={(e) => onSelectPago(e.target.value)}
@@ -82,7 +102,7 @@ export default function CartPanel({
         </select>
         <button
           onClick={onCreateOrder}
-          disabled={isEmpty || !selectedPago || isSubmitting}
+          disabled={isEmpty || !selectedPago || !clienteNombre.trim() || isSubmitting}
           className="w-full bg-primary text-on-primary py-3 text-label-md font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         >
           {isSubmitting ? (

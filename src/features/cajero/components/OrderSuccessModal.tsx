@@ -24,6 +24,12 @@ export default function OrderSuccessModal({ pedido, onClose }: OrderSuccessModal
             <span className="text-on-surface-variant">Estado</span>
             <span className="text-on-surface font-bold uppercase">{pedido.estado_codigo}</span>
           </div>
+          {pedido.nombre_para && (
+            <div className="flex justify-between text-body-md">
+              <span className="text-on-surface-variant">Para</span>
+              <span className="text-on-surface font-bold">{pedido.nombre_para}</span>
+            </div>
+          )}
         </div>
         <button
           onClick={onClose}

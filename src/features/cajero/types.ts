@@ -1,3 +1,9 @@
+export interface IngredientePersonalizado {
+  id: number
+  nombre: string
+  es_alergeno: boolean
+  es_removible: boolean
+}
 export interface CajeroProduct {
   id: number
   nombre: string
@@ -13,6 +19,7 @@ export interface CartItem {
   precioBase: number
   cantidad: number
   imagenesUrl: string[]
+  personalizacion: number[] | null
 }
 export interface FormaPago {
   codigo: string
@@ -25,7 +32,9 @@ export interface PedidoItemRequest {
   personalizacion: number[] | null
 }
 export interface PedidoCreatePayload {
+  direccion_id?: number | null
   forma_pago_codigo: string
+  nombre_para?: string | null
   notas: string | null
   items: PedidoItemRequest[]
 }
@@ -42,6 +51,7 @@ export interface PedidoOut {
   usuario_id: number
   estado_codigo: string
   forma_pago_codigo: string
+  nombre_para: string | null
   subtotal: number
   descuento: number
   costo_envio: number

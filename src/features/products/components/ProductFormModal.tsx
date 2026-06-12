@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { getProductById } from '@/features/products/types'
 import type { Product, ProductFormData } from '@/features/products/types'
 import type { Category } from '@/features/categorias/types'
 import type { Ingredient } from '@/features/ingredients/types'
@@ -35,10 +36,11 @@ export default function ProductFormModal({
   const [imageUrl, setImageUrl] = useState(product?.imagenesUrl?.[0] ?? '')
   const [disponible, setDisponible] = useState(product?.disponible ?? true)
   const [selectedCatIds, setSelectedCatIds] = useState<number[]>([])
-  const [selectedIngIds, setSelectedIngIds] = useState<number[]>([])
+  const [ingredientMap, setIngredientMap] = useState<Record<number, { esRemovible: boolean }>>({})
   const [unidadVentaId, setUnidadVentaId] = useState<number | null>(
     product?.unidadVentaId ?? null,
   )
+
   const unidadesByTipo = useMemo(() => {
     const map: Record<string, UnidadMedida[]> = {}
     for (const u of unidades) {
@@ -47,6 +49,7 @@ export default function ProductFormModal({
     }
     return map
   }, [unidades])
+
   useEffect(() => {
     if (product) {
       setNombre(product.nombre)
@@ -56,18 +59,54 @@ export default function ProductFormModal({
       setImageUrl(product.imagenesUrl?.[0] ?? '')
       setDisponible(product.disponible)
       setUnidadVentaId(product.unidadVentaId)
+
+      getProductById(product.id).then((detail) => {
+        setSelectedCatIds(detail.categorias.map((c) => c.id))
+        const map: Record<number, { esRemovible: boolean }> = {}
+        for (const ing of detail.ingredientes) {
+          map[ing.id] = { esRemovible: ing.esRemovible }
+        }
+        setIngredientMap(map)
+      }).catch(() => {})
+    } else {
+      setSelectedCatIds([])
+      setIngredientMap({})
     }
   }, [product])
+
   const toggleCat = (id: number) => {
     setSelectedCatIds((prev) =>
       prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id],
     )
   }
   const toggleIng = (id: number) => {
-    setSelectedIngIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
-    )
+    setIngredientMap((prev) => {
+      if (id in prev) {
+        const next = { ...prev }
+        delete next[id]
+        return next
+      }
+      return { ...prev, [id]: { esRemovible: true } }
+    })
   }
+  const toggleRemovible = (id: number) => {
+    setIngredientMap((prev) => {
+      if (!(id in prev)) return prev
+      return { ...prev, [id]: { esRemovible: !prev[id].esRemovible } }
+    })
+  }
+  const flatCats = useMemo(() => {
+    const result: { cat: Category; depth: number }[] = []
+    function walk(list: Category[], d: number) {
+      for (const c of list) {
+        result.push({ cat: c, depth: d })
+        if (c.hijos && c.hijos.length > 0) walk(c.hijos, d + 1)
+      }
+    }
+    walk(categories, 0)
+    return result
+  }, [categories])
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!nombre.trim() || precioBase <= 0) return
@@ -83,11 +122,11 @@ export default function ProductFormModal({
         categoriaId: id,
         esPrincipal: i === 0,
       })),
-      ingredientes: selectedIngIds.map((id) => ({
-        ingredienteId: id,
+      ingredientes: Object.entries(ingredientMap).map(([id, config]) => ({
+        ingredienteId: Number(id),
         cantidad: 1,
         unidadMedidaId: 1,
-        esRemovible: false,
+        esRemovible: config.esRemovible,
       })),
     })
   }
@@ -158,31 +197,36 @@ export default function ProductFormModal({
                   <label className="text-label-sm font-label-sm text-on-surface-variant">
                     Categorías
                   </label>
-                  <div className="flex flex-wrap gap-2">
-                    {categories.map((cat) => {
-                      const selected = selectedCatIds.includes(cat.id)
-                      return (
-                        <button
-                          key={cat.id}
-                          type="button"
-                          onClick={() => toggleCat(cat.id)}
-                          className={`px-4 py-2 text-label-sm font-label-sm border transition-all cursor-pointer flex items-center gap-2 ${
-                            selected
-                              ? 'bg-primary-container/20 border-primary text-primary'
-                              : 'bg-surface-container-high border-outline-variant/30 text-on-surface-variant hover:border-outline hover:text-on-surface'
-                          }`}
-                        >
-                          {cat.nombre}
-                          {selected && (
-                            <span className="material-symbols-outlined text-[16px]">check</span>
-                          )}
-                        </button>
-                      )
-                    })}
-                    {categories.length === 0 && (
-                      <p className="text-label-sm text-on-surface-variant/50">
+                  <div className="flex flex-col gap-1">
+                    {flatCats.length === 0 ? (
+                      <p className="text-label-sm text-on-surface-variant/50 py-2">
                         No hay categorías disponibles
                       </p>
+                    ) : (
+                      flatCats.map(({ cat, depth }) => {
+                        const selected = selectedCatIds.includes(cat.id)
+                        return (
+                          <button
+                            key={cat.id}
+                            type="button"
+                            onClick={() => toggleCat(cat.id)}
+                            style={{ paddingLeft: `${12 + depth * 20}px` }}
+                            className={`flex items-center gap-2 py-2 pr-3 text-label-sm font-label-sm border-l-2 transition-all cursor-pointer text-left ${
+                              selected
+                                ? 'bg-primary-container/10 border-primary text-primary'
+                                : 'border-transparent text-on-surface-variant hover:text-on-surface hover:border-outline-variant'
+                            }`}
+                          >
+                            {depth > 0 && (
+                              <span className="material-symbols-outlined text-[12px] text-on-surface-variant/40">subdirectory_arrow_right</span>
+                            )}
+                            <span className="flex-1 truncate">{cat.nombre}</span>
+                            {selected && (
+                              <span className="material-symbols-outlined text-[16px]">check</span>
+                            )}
+                          </button>
+                        )
+                      })
                     )}
                   </div>
                 </div>
@@ -262,43 +306,60 @@ export default function ProductFormModal({
                 </p>
                 <div className="grid grid-cols-2 gap-2 max-h-52 overflow-y-auto pr-2">
                   {ingredients.map((ing) => {
-                    const selected = selectedIngIds.includes(ing.id)
+                    const selected = ing.id in ingredientMap
                     return (
-                      <button
+                      <div
                         key={ing.id}
-                        type="button"
-                        onClick={() => toggleIng(ing.id)}
-                        className={`flex items-center gap-3 px-4 py-2.5 text-left border transition-all cursor-pointer ${
+                        className={`flex flex-col px-4 py-2.5 border transition-all ${
                           selected
-                            ? 'bg-primary-container/10 border-primary/40 text-on-surface'
-                            : 'bg-surface-container-high/50 border-outline-variant/20 text-on-surface-variant hover:border-outline'
+                            ? 'bg-primary-container/10 border-primary/40'
+                            : 'bg-surface-container-high/50 border-outline-variant/20'
                         }`}
                       >
-                        <span
-                          className={`w-5 h-5 flex items-center justify-center border ${
-                            selected
-                              ? 'bg-primary-container border-primary'
-                              : 'border-outline-variant/40'
-                          }`}
+                        <button
+                          type="button"
+                          onClick={() => toggleIng(ing.id)}
+                          className="flex items-center gap-3 text-left cursor-pointer"
                         >
-                          {selected && (
-                            <span className="material-symbols-outlined text-on-primary-container text-[14px]">
-                              check
+                          <span
+                            className={`w-5 h-5 flex items-center justify-center border ${
+                              selected
+                                ? 'bg-primary-container border-primary'
+                                : 'border-outline-variant/40'
+                            }`}
+                          >
+                            {selected && (
+                              <span className="material-symbols-outlined text-on-primary-container text-[14px]">
+                                check
+                              </span>
+                            )}
+                          </span>
+                          <span className="text-label-sm font-label-sm flex-1 truncate">
+                            {ing.nombre}
+                          </span>
+                          {ing.es_alergeno && (
+                            <span
+                              className="material-symbols-outlined text-error text-[16px]"
+                              title="Alérgeno"
+                            >
+                              warning
                             </span>
                           )}
-                        </span>
-                        <span className="text-label-sm font-label-sm flex-1 truncate">
-                          {ing.nombre}
-                        </span>
-                        {ing.es_alergeno && (
-                          <span
-                            className="material-symbols-outlined text-error text-[16px]"
-                            title="Alérgeno"
-                          >
-                            warning
-                          </span>
+                        </button>
+                        {selected && (
+                          <label className="flex items-center gap-2 mt-1.5 ml-8 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={ingredientMap[ing.id].esRemovible}
+                              onChange={() => toggleRemovible(ing.id)}
+                              className="accent-primary w-3.5 h-3.5"
+                            />
+                            <span className="text-label-xs text-on-surface-variant">
+                              Removible por el cliente
+                            </span>
+                          </label>
                         )}
-                      </button>
+                      </div>
                     )
                   })}
                   {ingredients.length === 0 && (
@@ -307,9 +368,9 @@ export default function ProductFormModal({
                     </p>
                   )}
                 </div>
-                {selectedIngIds.length > 0 && (
+                {Object.keys(ingredientMap).length > 0 && (
                   <p className="text-label-sm text-on-surface-variant/60">
-                    {selectedIngIds.length} ingrediente(s) seleccionado(s)
+                    {Object.keys(ingredientMap).length} ingrediente(s) seleccionado(s)
                   </p>
                 )}
               </section>

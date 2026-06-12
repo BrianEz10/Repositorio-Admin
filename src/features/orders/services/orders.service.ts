@@ -1,14 +1,25 @@
 import api from '@/lib/axios'
 import { toCamelCaseOrder } from '@/features/orders/types'
 import type { Order } from '@/features/orders/types'
-export const getOrders = async (): Promise<Order[]> => {
-  const { data } = await api.get<any[]>('/pedidos/')
-  return data.map(toCamelCaseOrder)
+
+interface PaginatedOrders {
+  items: any[]
+  total: number
+  page: number
+  size: number
+  pages: number
 }
+
+export const getOrders = async (): Promise<Order[]> => {
+  const { data } = await api.get<PaginatedOrders>('/pedidos/')
+  return data.items.map(toCamelCaseOrder)
+}
+
 export const getOrderById = async (id: number): Promise<Order> => {
   const { data } = await api.get<any>(`/pedidos/${id}`)
   return toCamelCaseOrder(data)
 }
+
 export const updateOrderStatus = async (
   id: number,
   estadoHacia: string,

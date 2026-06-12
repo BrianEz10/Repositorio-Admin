@@ -6,36 +6,49 @@ import {
   useCart,
 } from '@/features/cajero/hooks/useCajero'
 import ProductGrid from '@/features/cajero/components/Productgrid'
+import ProductCustomizerModal from '@/features/cajero/components/ProductCustomizerModal'
 import CartPanel from '@/features/cajero/components/CartPanel'
 import OrderSuccessModal from '@/features/cajero/components/OrderSuccessModal'
-import type { PedidoOut } from '@/features/cajero/types'
+import type { CajeroProduct, PedidoOut } from '@/features/cajero/types'
 export default function CajeroPage() {
   const { data: products, isLoading, isError, refetch } = useCajeroProducts()
   const { data: formasPago } = useFormasPago()
   const { mutateAsync: createPedido, isPending } = useCreatePedido()
   const cart = useCart()
   const [selectedPago, setSelectedPago] = useState('')
+  const [clienteNombre, setClienteNombre] = useState('')
   const [successPedido, setSuccessPedido] = useState<PedidoOut | null>(null)
+  const [customizingProduct, setCustomizingProduct] = useState<CajeroProduct | null>(null)
+
+  const handleConfirmCustomization = (personalizacion: number[] | null) => {
+    if (!customizingProduct) return
+    cart.addItem(customizingProduct, personalizacion)
+    setCustomizingProduct(null)
+  }
+
   const handleCreateOrder = async () => {
-    if (cart.isEmpty || !selectedPago) return
+    if (cart.isEmpty || !selectedPago || !clienteNombre.trim()) return
     try {
       const pedido = await createPedido({
         forma_pago_codigo: selectedPago,
+        nombre_para: clienteNombre.trim(),
         direccion_id: null,
         notas: null,
         items: cart.items.map((i) => ({
           producto_id: i.id,
           cantidad: i.cantidad,
-          personalizacion: null,
+          personalizacion: i.personalizacion,
         })),
       })
       setSuccessPedido(pedido)
       cart.clearCart()
       setSelectedPago('')
+      setClienteNombre('')
     } catch {
       // error handled by React Query
     }
   }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -54,12 +67,14 @@ export default function CajeroPage() {
   }
   return (
     <div className="flex gap-0 h-[calc(100vh-7rem)]">
-      <ProductGrid products={products ?? []} onAddProduct={cart.addItem} />
+      <ProductGrid products={products ?? []} onAddProduct={setCustomizingProduct} />
       <CartPanel
         items={cart.items}
         formasPago={formasPago ?? []}
         selectedPago={selectedPago}
         onSelectPago={setSelectedPago}
+        clienteNombre={clienteNombre}
+        onClienteNombreChange={setClienteNombre}
         onUpdateQuantity={cart.updateQuantity}
         onRemoveItem={cart.removeItem}
         subtotal={cart.subtotal}
@@ -67,6 +82,13 @@ export default function CajeroPage() {
         isSubmitting={isPending}
         onCreateOrder={handleCreateOrder}
       />
+      {customizingProduct && (
+        <ProductCustomizerModal
+          product={customizingProduct}
+          onConfirm={handleConfirmCustomization}
+          onClose={() => setCustomizingProduct(null)}
+        />
+      )}
       {successPedido && (
         <OrderSuccessModal pedido={successPedido} onClose={() => setSuccessPedido(null)} />
       )}
