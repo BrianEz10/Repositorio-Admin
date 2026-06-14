@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useOrders, useUpdateOrderStatus } from '@/features/orders/hooks/useOrders'
+import { useOrderStatusWS } from '@/features/orders/hooks/useOrderStatusWS'
 import { useClientNames } from '@/features/orders/hooks/useClientNames'
 import { hydrateClientNames } from '@/features/orders/services/admin.service'
 import OrdersKanban from '@/features/orders/components/OrdersKanban'
@@ -8,6 +9,7 @@ import type { Order } from '@/features/orders/types'
 export default function PedidosPage() {
   const { data: orders, isLoading, error } = useOrders()
   const { mutate: updateStatus } = useUpdateOrderStatus()
+  useOrderStatusWS()
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const namesMap = useClientNames(orders)
   const hydratedOrders = useMemo(
