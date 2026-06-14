@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Layout from '@/shared/Layout'
 import ProtectedRoute from '@/shared/ProtectedRoute'
 import CajeroPage from '@/features/cajero/page/CajeroPage'
+import DashboardPage from '@/features/dashboard/page/DashboardPage'
 import LoginPage from '@/features/auth/page/LoginPage'
 import ProductosPage from '@/features/products/page/ProductosPage'
 import IngredientesPage from '@/features/ingredients/page/IngredientesPage'
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <Navigate to="/productos" replace />,
+          },
+          {
+            path: 'dashboard',
+            element: <DashboardPage />,
           },
           {
             path: 'productos',
