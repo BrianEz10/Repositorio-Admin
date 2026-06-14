@@ -3,19 +3,13 @@ import ResumenCards from '@/features/dashboard/components/ResumenCards'
 import PedidosResumen from '@/features/dashboard/components/PedidosResumen'
 import ProductosTop from '@/features/dashboard/components/ProductosTop'
 import RecientesTable from '@/features/dashboard/components/RecientesTable'
+import { SkeletonDashboard } from '@/shared/Skeleton'
 
 export default function DashboardPage() {
   const { data, isLoading, isError } = useDashboardResumen()
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <span className="material-symbols-outlined text-[40px] text-on-surface-variant/30 animate-pulse">
-          dashboard
-        </span>
-        <p className="text-label-sm text-on-surface-variant/50">Cargando dashboard...</p>
-      </div>
-    )
+    return <SkeletonDashboard />
   }
 
   if (isError || !data) {

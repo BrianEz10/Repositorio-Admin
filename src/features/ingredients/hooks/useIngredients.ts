@@ -7,6 +7,8 @@ import {
   deleteIngredient,
 } from '@/features/ingredients/services/ingredients.service'
 import type { Ingredient, IngredientFormData } from '@/features/ingredients/types'
+import useToastStore from '@/store/toastStore'
+const toast = useToastStore.getState
 export const useIngredients = () =>
   useQuery({
     queryKey: ['ingredients'],
@@ -23,6 +25,10 @@ export const useCreateIngredient = () => {
     mutationFn: (payload: IngredientFormData) => createIngredient(payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['ingredients'] })
+      toast().addToast('success', 'Ingrediente creado correctamente')
+    },
+    onError: () => {
+      toast().addToast('error', 'Error al crear ingrediente')
     },
   })
 }
@@ -33,6 +39,10 @@ export const useUpdateIngredient = () => {
       updateIngredient(id, payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['ingredients'] })
+      toast().addToast('success', 'Ingrediente actualizado correctamente')
+    },
+    onError: () => {
+      toast().addToast('error', 'Error al actualizar ingrediente')
     },
   })
 }
@@ -42,6 +52,10 @@ export const useDeleteIngredient = () => {
     mutationFn: (id: number) => deleteIngredient(id),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['ingredients'] })
+      toast().addToast('success', 'Ingrediente eliminado correctamente')
+    },
+    onError: () => {
+      toast().addToast('error', 'Error al eliminar ingrediente')
     },
   })
 }

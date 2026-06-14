@@ -1,10 +1,12 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Layout from '@/shared/Layout'
 import ProtectedRoute from '@/shared/ProtectedRoute'
+import NotFoundPage from '@/shared/NotFoundPage'
 import CajeroPage from '@/features/cajero/page/CajeroPage'
 import DashboardPage from '@/features/dashboard/page/DashboardPage'
 import LoginPage from '@/features/auth/page/LoginPage'
 import ProductosPage from '@/features/products/page/ProductosPage'
+import DetalleProductoPage from '@/features/products/page/DetalleProductoPage'
 import IngredientesPage from '@/features/ingredients/page/IngredientesPage'
 import CategoriasPage from '@/features/categorias/page/CategoriasPage'
 import PedidosPage from '@/features/orders/page/PedidosPage'
@@ -39,6 +41,10 @@ const router = createBrowserRouter([
             element: <ProductosPage />,
           },
           {
+            path: 'productos/:id',
+            element: <DetalleProductoPage />,
+          },
+          {
             path: 'ingredientes',
             element: <IngredientesPage />,
           },
@@ -59,6 +65,10 @@ const router = createBrowserRouter([
             element: <AdminUsersPage />,
           },
         ],
+      },
+      {
+        path: '*',
+        element: <NotFoundPage />,
       },
     ],
   },

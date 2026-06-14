@@ -8,6 +8,8 @@ import {
   toggleProductDisponible,
 } from '@/features/products/types'
 import type { Product, ProductFormData } from '@/features/products/types'
+import useToastStore from '@/store/toastStore'
+const toast = useToastStore.getState
 export const useProducts = () =>
   useQuery({
     queryKey: ['products'],
@@ -24,6 +26,10 @@ export const useCreateProduct = () => {
     mutationFn: (payload: ProductFormData) => createProduct(payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['products'] })
+      toast().addToast('success', 'Producto creado correctamente')
+    },
+    onError: () => {
+      toast().addToast('error', 'Error al crear producto')
     },
   })
 }
@@ -34,6 +40,10 @@ export const useUpdateProduct = () => {
       updateProduct(id, payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['products'] })
+      toast().addToast('success', 'Producto actualizado correctamente')
+    },
+    onError: () => {
+      toast().addToast('error', 'Error al actualizar producto')
     },
   })
 }
@@ -43,6 +53,10 @@ export const useDeleteProduct = () => {
     mutationFn: (id: number) => deleteProduct(id),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['products'] })
+      toast().addToast('success', 'Producto eliminado correctamente')
+    },
+    onError: () => {
+      toast().addToast('error', 'Error al eliminar producto')
     },
   })
 }
@@ -53,6 +67,10 @@ export const useToggleDisponible = () => {
       toggleProductDisponible(id, disponible),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['products'] })
+      toast().addToast('success', 'Disponibilidad actualizada')
+    },
+    onError: () => {
+      toast().addToast('error', 'Error al actualizar disponibilidad')
     },
   })
 }

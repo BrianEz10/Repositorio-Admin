@@ -9,6 +9,7 @@ import {
 import type { Ingredient, IngredientFormData } from '@/features/ingredients/types'
 import IngredientsTable from '@/features/ingredients/components/IngredientsTable'
 import IngredientFormModal from '@/features/ingredients/components/IngredientFormModal'
+import { SkeletonTable } from '@/shared/Skeleton'
 
 /* ── Delete Confirm Modal (inline) ── */
 function DeleteConfirmModal({
@@ -125,11 +126,15 @@ export default function IngredientesPage() {
   // Loading
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 gap-4">
-        <span className="material-symbols-outlined animate-spin text-[48px] text-primary">
-          progress_activity
-        </span>
-        <p className="text-body-md text-on-surface-variant">Cargando ingredientes...</p>
+      <div className="flex flex-col gap-6">
+        <div className="flex justify-between items-end">
+          <div>
+            <div className="animate-pulse bg-surface-container-high h-8 w-48 mb-2" />
+            <div className="animate-pulse bg-surface-container-high h-4 w-72" />
+          </div>
+          <div className="animate-pulse bg-surface-container-high h-10 w-36" />
+        </div>
+        <SkeletonTable rows={6} columns={5} />
       </div>
     )
   }

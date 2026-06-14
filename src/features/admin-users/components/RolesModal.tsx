@@ -38,7 +38,11 @@ export default function RolesModal({ user, allRoles, onSubmit, onClose, isSubmit
           </div>
           <div className="space-y-2 max-h-64 overflow-y-auto">
             {allRoles.length === 0 ? (
-              <p className="text-body-md text-on-surface-variant/60 text-center py-4">Cargando roles...</p>
+              <div className="space-y-2 py-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="animate-pulse bg-surface-container-high h-12 w-full" />
+                ))}
+              </div>
             ) : (
               allRoles.map((rol) => (
                 <label
