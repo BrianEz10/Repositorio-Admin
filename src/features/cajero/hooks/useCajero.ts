@@ -34,6 +34,10 @@ export const useCreatePedido = () => {
     mutationFn: (payload: PedidoCreatePayload) => createPedido(payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['recent-orders'] })
+      useToastStore.getState().addToast('success', 'Pedido creado correctamente')
+    },
+    onError: () => {
+      useToastStore.getState().addToast('error', 'Error al crear pedido')
     },
   })
 }

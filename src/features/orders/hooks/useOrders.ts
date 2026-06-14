@@ -4,6 +4,8 @@ import {
   getOrderById,
   updateOrderStatus,
 } from '@/features/orders/services/orders.service'
+import useToastStore from '@/store/toastStore'
+const toast = useToastStore.getState
 export const useOrders = () =>
   useQuery({
     queryKey: ['orders'],
@@ -29,6 +31,10 @@ export const useUpdateOrderStatus = () => {
     }) => updateOrderStatus(id, estadoHacia, motivo),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['orders'] })
+      toast().addToast('success', 'Estado del pedido actualizado')
+    },
+    onError: () => {
+      toast().addToast('error', 'Error al cambiar estado del pedido')
     },
   })
 }

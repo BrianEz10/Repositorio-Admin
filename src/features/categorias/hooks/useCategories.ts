@@ -7,6 +7,8 @@ import {
   updateCategory,
   deleteCategory,
 } from '@/features/categorias/services/categories.service'
+import useToastStore from '@/store/toastStore'
+const toast = useToastStore.getState
 export const useCategories = () =>
   useQuery({
     queryKey: ['categories'],
@@ -23,6 +25,10 @@ export const useCreateCategory = () => {
     mutationFn: (payload: CategoryFormData) => createCategory(payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['categories'] })
+      toast().addToast('success', 'Categoría creada correctamente')
+    },
+    onError: () => {
+      toast().addToast('error', 'Error al crear categoría')
     },
   })
 }
@@ -33,6 +39,10 @@ export const useUpdateCategory = () => {
       updateCategory(id, payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['categories'] })
+      toast().addToast('success', 'Categoría actualizada correctamente')
+    },
+    onError: () => {
+      toast().addToast('error', 'Error al actualizar categoría')
     },
   })
 }
@@ -42,6 +52,10 @@ export const useDeleteCategory = () => {
     mutationFn: (id: number) => deleteCategory(id),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['categories'] })
+      toast().addToast('success', 'Categoría eliminada correctamente')
+    },
+    onError: () => {
+      toast().addToast('error', 'Error al eliminar categoría')
     },
   })
 }
