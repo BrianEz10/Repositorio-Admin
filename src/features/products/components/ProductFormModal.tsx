@@ -4,6 +4,7 @@ import type { Product, ProductFormData } from '@/features/products/types'
 import type { Category } from '@/features/categorias/types'
 import type { Ingredient } from '@/features/ingredients/types'
 import type { UnidadMedida } from '@/features/unidades-medida/types'
+import ImageUploader from '@/features/products/components/ImageUploader'
 interface Props {
   product: Product | null
   categories: Category[]
@@ -382,37 +383,10 @@ export default function ProductFormModal({
                 <h3 className="text-label-md font-label-md text-primary uppercase tracking-widest">
                   Imagen del Producto
                 </h3>
-                <div className="aspect-square bg-surface-variant/40 border border-outline-variant/20 overflow-hidden">
-                  {imageUrl ? (
-                    <img
-                      src={imageUrl}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        ;(e.target as HTMLImageElement).style.display = 'none'
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                      <span className="material-symbols-outlined text-[48px] text-on-surface-variant/30">
-                        add_photo_alternate
-                      </span>
-                      <p className="text-label-sm text-on-surface-variant/40">Sin imagen</p>
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-label-sm font-label-sm text-on-surface-variant">
-                    URL de la imagen
-                  </label>
-                  <input
-                    type="url"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    placeholder="https://..."
-                    className="bg-background border-b border-outline-variant focus:border-primary focus:ring-0 text-body-md py-2 transition-colors placeholder:text-on-surface-variant/40 text-sm"
-                  />
-                </div>
+                <ImageUploader
+                  currentUrl={imageUrl}
+                  onUrlChange={setImageUrl}
+                />
               </section>
               {/* Estado */}
               <section className="bg-surface-container-low p-6 border border-outline-variant/20 flex flex-col gap-4">
