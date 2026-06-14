@@ -6,6 +6,7 @@ import { hydrateClientNames } from '@/features/orders/services/admin.service'
 import OrdersKanban from '@/features/orders/components/OrdersKanban'
 import OrderDetailPanel from '@/features/orders/components/OrderDetailPanel'
 import type { Order } from '@/features/orders/types'
+import { SkeletonKanban } from '@/shared/Skeleton'
 export default function PedidosPage() {
   const { data: orders, isLoading, error } = useOrders()
   const { mutate: updateStatus } = useUpdateOrderStatus()
@@ -31,11 +32,7 @@ export default function PedidosPage() {
     })
   }, [hydratedOrders])
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-on-surface-variant">Cargando pedidos...</p>
-      </div>
-    )
+    return <SkeletonKanban />
   }
   if (error) {
     return (

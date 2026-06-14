@@ -10,6 +10,7 @@ import ProductCustomizerModal from '@/features/cajero/components/ProductCustomiz
 import CartPanel from '@/features/cajero/components/CartPanel'
 import OrderSuccessModal from '@/features/cajero/components/OrderSuccessModal'
 import type { CajeroProduct, PedidoOut } from '@/features/cajero/types'
+import { SkeletonGrid } from '@/shared/Skeleton'
 export default function CajeroPage() {
   const { data: products, isLoading, isError, refetch } = useCajeroProducts()
   const { data: formasPago } = useFormasPago()
@@ -51,8 +52,9 @@ export default function CajeroPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <p className="text-on-surface-variant">Cargando productos...</p>
+      <div className="flex flex-col gap-6 h-[calc(100vh-7rem)]">
+        <div className="animate-pulse bg-surface-container-high h-8 w-48 mb-2" />
+        <SkeletonGrid />
       </div>
     )
   }

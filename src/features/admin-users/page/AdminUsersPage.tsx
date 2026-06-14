@@ -11,6 +11,7 @@ import UsersTable from '@/features/admin-users/components/UsersTable'
 import UserFormModal from '@/features/admin-users/components/UserFormModal'
 import RolesModal from '@/features/admin-users/components/RolesModal'
 import DeleteConfirmModal from '@/features/admin-users/components/DeleteConfirmModal'
+import { SkeletonTable } from '@/shared/Skeleton'
 export default function AdminUsersPage() {
   const { data: users, isLoading, isError, error, refetch } = useAdminUsers()
   const { data: allRoles } = useRoles()
@@ -44,9 +45,14 @@ export default function AdminUsersPage() {
   }
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 gap-4">
-        <span className="material-symbols-outlined animate-spin text-[48px] text-primary">progress_activity</span>
-        <p className="text-body-md text-on-surface-variant">Cargando usuarios...</p>
+      <div className="flex flex-col gap-6">
+        <div className="flex justify-between items-end">
+          <div>
+            <div className="animate-pulse bg-surface-container-high h-8 w-48 mb-2" />
+            <div className="animate-pulse bg-surface-container-high h-4 w-72" />
+          </div>
+        </div>
+        <SkeletonTable rows={6} columns={5} />
       </div>
     )
   }
