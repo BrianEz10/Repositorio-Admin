@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useOrders, useUpdateOrderStatus } from '@/features/orders/hooks/useOrders'
 import { useClientNames } from '@/features/orders/hooks/useClientNames'
 import { hydrateClientNames } from '@/features/orders/services/admin.service'
@@ -21,6 +21,13 @@ export default function PedidosPage() {
   ) => {
     updateStatus({ id: orderId, estadoHacia, motivo })
   }
+  useEffect(() => {
+    setSelectedOrder((prev) => {
+      if (!prev) return null
+      const updated = hydratedOrders.find((o) => o.id === prev.id)
+      return updated ?? null
+    })
+  }, [hydratedOrders])
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
