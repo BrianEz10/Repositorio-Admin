@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { Category, CategoryFormData } from '@/features/categorias/types'
+import ImageUploader from '@/features/products/components/ImageUploader'
 interface Props {
   category: Category | null
   parentCategories: Category[]
@@ -114,30 +115,15 @@ export default function CategoryFormModal({
               className="bg-surface-container-high border border-outline-variant/30 text-on-surface text-body-md px-4 py-3 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-on-surface-variant/40 resize-none"
             />
           </div>
-          {/* Imagen URL */}
+          {/* Imagen */}
           <div className="flex flex-col gap-2">
             <label className="text-label-md font-label-md text-on-surface-variant">
-              URL de Imagen
+              Imagen
             </label>
-            <input
-              type="url"
-              value={imagenUrl}
-              onChange={(e) => setImagenUrl(e.target.value)}
-              placeholder="https://ejemplo.com/imagen.jpg"
-              className="bg-surface-container-high border border-outline-variant/30 text-on-surface text-body-md px-4 py-3 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-on-surface-variant/40"
+            <ImageUploader
+              currentUrl={imagenUrl}
+              onUrlChange={setImagenUrl}
             />
-            {imagenUrl && (
-              <div className="mt-2 w-16 h-16 border border-outline-variant/20 overflow-hidden">
-                <img
-                  src={imagenUrl}
-                  alt="Preview"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-              </div>
-            )}
           </div>
           {/* Footer */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-outline-variant/20">
