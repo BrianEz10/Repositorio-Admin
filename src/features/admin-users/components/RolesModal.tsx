@@ -8,18 +8,14 @@ interface RolesModalProps {
   isSubmitting: boolean
 }
 export default function RolesModal({ user, allRoles, onSubmit, onClose, isSubmitting }: RolesModalProps) {
-  const [selected, setSelected] = useState<string[]>([])
+  const [selected, setSelected] = useState<string>('')
   useEffect(() => {
-    setSelected([...user.roles])
+    setSelected(user.roles[0] ?? '')
   }, [user])
-  const toggle = (codigo: string) => {
-    setSelected((prev) =>
-      prev.includes(codigo) ? prev.filter((r) => r !== codigo) : [...prev, codigo],
-    )
-  }
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(selected)
+    if (!selected) return
+    onSubmit([selected])
   }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
@@ -48,15 +44,16 @@ export default function RolesModal({ user, allRoles, onSubmit, onClose, isSubmit
                 <label
                   key={rol.codigo}
                   className={`flex items-center gap-3 px-4 py-3 border cursor-pointer transition-all ${
-                    selected.includes(rol.codigo)
+                    selected === rol.codigo
                       ? 'bg-primary/5 border-primary/30'
                       : 'border-outline-variant/10 hover:bg-surface-container-high'
                   }`}
                 >
                   <input
-                    type="checkbox"
-                    checked={selected.includes(rol.codigo)}
-                    onChange={() => toggle(rol.codigo)}
+                    type="radio"
+                    name="rol"
+                    checked={selected === rol.codigo}
+                    onChange={() => setSelected(rol.codigo)}
                     className="accent-primary w-4 h-4"
                   />
                   <div className="flex-1">

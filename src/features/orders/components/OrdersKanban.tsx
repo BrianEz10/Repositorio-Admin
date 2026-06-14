@@ -5,7 +5,7 @@ const KANBAN_COLUMNS = [
   {
     key: 'PENDIENTE',
     label: 'Pendientes',
-    include: ['PENDIENTE', 'CONFIRMADO'],
+    include: ['PENDIENTE'],
     dotColor: 'bg-primary-container',
     borderColor: 'border-l-primary',
     textColor: 'text-primary',
