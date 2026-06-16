@@ -6,6 +6,7 @@ import {
   createPedido,
   getRecentOrders,
 } from '@/features/cajero/services/cajero.service'
+import useToastStore from '@/store/toastStore'
 import type { CajeroProduct, CartItem, PedidoCreatePayload } from '@/features/cajero/types'
 
 function personalizacionKey(p: number[] | null): string {
