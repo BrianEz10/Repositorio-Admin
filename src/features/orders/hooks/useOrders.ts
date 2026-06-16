@@ -11,6 +11,7 @@ export const useOrders = () =>
   useQuery({
     queryKey: ['orders'],
     queryFn: getOrders,
+    refetchInterval: 30_000,
   })
 export const useOrder = (id: number) =>
   useQuery({

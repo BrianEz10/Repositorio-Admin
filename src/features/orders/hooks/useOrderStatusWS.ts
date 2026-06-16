@@ -9,7 +9,7 @@ function getWsBaseUrl(): string {
   const apiUrl: string = import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api/v1'
   return apiUrl
     .replace(/^http/, 'ws')
-    .replace(/\/api(\/v\d+)?\/?$/, '')
+    .replace(/\/$/, '')
 }
 
 export function useOrderStatusWS() {
@@ -25,7 +25,7 @@ export function useOrderStatusWS() {
     if (!token) return
 
     const baseUrl = getWsBaseUrl()
-    const wsUrl = `${baseUrl}/ws?token=${token}`
+    const wsUrl = `${baseUrl}/pedidos/ws?token=${token}`
     setStatus('connecting')
 
     const ws = new WebSocket(wsUrl)
@@ -39,8 +39,8 @@ export function useOrderStatusWS() {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data)
-        setLastEvent(data.type ?? 'unknown')
-        if (data.type === 'order_status_changed') {
+        setLastEvent(data.event ?? 'unknown')
+        if (data.event) {
           void queryClient.invalidateQueries({ queryKey: ['orders'] })
         }
       } catch {
