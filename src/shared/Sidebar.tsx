@@ -17,14 +17,19 @@ const activeLink = `${baseLink} text-primary border-r-4 border-primary bg-primar
 const inactiveLink = `${baseLink} text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high`
 
 export default function Sidebar() {
+  const user = useAuthStore((s) => s.user)
   const logout = useAuthStore((s) => s.logout)
   const rol = useAuthStore((s) => s.rol)
   const isAdmin = rol === 'admin'
   const isStock = rol === 'stock'
+  const isPedidos = rol === 'empleado'
+  const isCajero = rol === 'cajero'
 
   const visibleItems = navItems.filter((item) => {
     if (item.adminOnly && !isAdmin) return false
     if (isStock && item.to !== '/productos' && item.to !== '/ingredientes') return false
+    if (isPedidos && item.to !== '/pedidos') return false
+    if (isCajero && item.to !== '/cajero') return false
     return true
   })
 
@@ -67,14 +72,20 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="mt-auto border-t border-outline-variant/10 pt-4">
-        <a
-          href="#"
-          className={inactiveLink}
-        >
-          <span className="material-symbols-outlined">settings</span>
-          <span>Settings</span>
-        </a>
+      <div className="mt-auto border-t border-outline-variant/10">
+        {user && (
+          <div className="px-6 py-4 border-b border-outline-variant/10 flex items-center gap-3">
+            <div className="w-10 h-10 bg-surface-container-high flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-on-surface-variant">person</span>
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-label-md font-bold text-on-surface truncate">{user.nombre} {user.apellido}</p>
+              <p className="text-label-xs text-on-surface-variant/60 truncate">{user.email}</p>
+            </div>
+          </div>
+        )}
+        <div className="pt-4">
+        
         <button
           onClick={logout}
           className={`${inactiveLink} w-full text-left`}
@@ -82,6 +93,7 @@ export default function Sidebar() {
           <span className="material-symbols-outlined">logout</span>
           <span>Logout</span>
         </button>
+        </div>
       </div>
     </aside>
   )

@@ -6,7 +6,9 @@ type Role = 'admin' | 'empleado' | 'cajero' | 'stock'
 interface User {
   id: number
   nombre: string
+  apellido: string
   email: string
+  celular: string | null
 }
 
 interface AuthState {

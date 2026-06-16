@@ -29,7 +29,9 @@ export interface LoginResponse {
   user: {
     id: number
     nombre: string
+    apellido: string
     email: string
+    celular: string | null
   }
   token: string
   rol: Role
