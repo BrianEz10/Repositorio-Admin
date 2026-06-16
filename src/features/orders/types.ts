@@ -1,3 +1,16 @@
+export interface Direccion {
+  id: number
+  alias: string
+  linea1: string
+  linea2: string
+  ciudad: string
+  provincia: string
+  codigoPostal: string
+  latitud: number
+  longitud: number
+  esPrincipal: boolean
+}
+
 export const ORDER_STATUSES = [
   'PENDIENTE',
   'CONFIRMADO',

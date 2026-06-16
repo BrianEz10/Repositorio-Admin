@@ -2,6 +2,7 @@ import type { Order, OrderStatus } from '@/features/orders/types'
 import { FORMA_PAGO_LABELS } from '@/features/orders/types'
 import StatusBadge from '@/features/orders/components/StatusBadge'
 import StatusControl from '@/features/orders/components/StatusControl'
+import { useAdminDireccion } from '@/features/orders/hooks/useOrders'
 interface OrderDetailPanelProps {
   order: Order
   onClose: () => void
@@ -12,6 +13,7 @@ export default function OrderDetailPanel({
   onClose,
   onStatusChange,
 }: OrderDetailPanelProps) {
+  const { data: direccion } = useAdminDireccion(order.direccionId)
   const createdDate = new Date(order.creadoEn)
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -68,10 +70,8 @@ export default function OrderDetailPanel({
               </div>
             )}
             <div>
-              <p className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Hora</p>
-              <p className="text-body-md text-on-surface">
-                {createdDate.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
-              </p>
+              <p className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">ID Usuario</p>
+              <p className="text-body-md text-on-surface">Usuario #{order.usuarioId}</p>
             </div>
           </div>
           {/* Items */}
@@ -126,15 +126,24 @@ export default function OrderDetailPanel({
             </div>
           </div>
           {/* Dirección */}
-          {order.direccionId && (
+          {direccion && (
             <div>
               <h4 className="text-label-md text-on-surface-variant uppercase tracking-wider mb-2 flex items-center gap-2">
                 <span className="material-symbols-outlined text-[18px]">location_on</span>
                 Dirección de Entrega
               </h4>
-              <p className="text-body-md text-on-surface bg-surface-container-high/50 px-4 py-3 border border-outline-variant/10">
-                ID #{order.direccionId}
-              </p>
+              <div className="text-body-md text-on-surface bg-surface-container-high/50 px-4 py-3 border border-outline-variant/10 space-y-1">
+                <p className="font-medium">{direccion.linea1}</p>
+                {direccion.linea2 && <p className="text-on-surface-variant">{direccion.linea2}</p>}
+                <p className="text-on-surface-variant text-label-md">
+                  {direccion.ciudad}, {direccion.provincia} - CP {direccion.codigoPostal}
+                </p>
+                {direccion.alias && (
+                  <p className="text-label-sm text-primary mt-1 italic">
+                    &quot;{direccion.alias}&quot;
+                  </p>
+                )}
+              </div>
             </div>
           )}
           {/* Notas */}
