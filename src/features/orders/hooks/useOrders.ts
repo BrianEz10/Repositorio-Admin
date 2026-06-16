@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getOrders,
   getOrderById,
+  getAdminDireccion,
   updateOrderStatus,
 } from '@/features/orders/services/orders.service'
 import useToastStore from '@/store/toastStore'
@@ -17,6 +18,13 @@ export const useOrder = (id: number) =>
     queryFn: () => getOrderById(id),
     enabled: id > 0,
   })
+export const useAdminDireccion = (direccionId: number | null) =>
+  useQuery({
+    queryKey: ['admin-direccion', direccionId],
+    queryFn: () => getAdminDireccion(direccionId!),
+    enabled: !!direccionId,
+  })
+
 export const useUpdateOrderStatus = () => {
   const queryClient = useQueryClient()
   return useMutation({

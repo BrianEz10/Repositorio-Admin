@@ -24,7 +24,7 @@ export interface RegisterRequest {
   password: string
 }
 
-export type Role = 'admin' | 'empleado' | 'cajero'
+export type Role = 'admin' | 'empleado' | 'cajero' | 'stock'
 export interface LoginResponse {
   user: {
     id: number

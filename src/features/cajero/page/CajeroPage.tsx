@@ -5,6 +5,7 @@ import {
   useCreatePedido,
   useCart,
 } from '@/features/cajero/hooks/useCajero'
+import useToastStore from '@/store/toastStore'
 import ProductGrid from '@/features/cajero/components/ProductGrid'
 import ProductCustomizerModal from '@/features/cajero/components/ProductCustomizerModal'
 import CartPanel from '@/features/cajero/components/CartPanel'
@@ -45,8 +46,10 @@ export default function CajeroPage() {
       cart.clearCart()
       setSelectedPago('')
       setClienteNombre('')
-    } catch {
-      // error handled by React Query
+    } catch (error) {
+      const raw = (error as any)?.response?.data?.detail
+      const msg = typeof raw === 'string' ? raw : raw?.detail ?? 'Error al crear pedido'
+      useToastStore.getState().addToast('error', msg)
     }
   }
 
