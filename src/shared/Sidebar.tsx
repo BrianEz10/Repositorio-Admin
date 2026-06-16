@@ -20,6 +20,13 @@ export default function Sidebar() {
   const logout = useAuthStore((s) => s.logout)
   const rol = useAuthStore((s) => s.rol)
   const isAdmin = rol === 'admin'
+  const isStock = rol === 'stock'
+
+  const visibleItems = navItems.filter((item) => {
+    if (item.adminOnly && !isAdmin) return false
+    if (isStock && item.to !== '/productos' && item.to !== '/ingredientes') return false
+    return true
+  })
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-surface-container border-r border-outline-variant/20 flex flex-col py-stack-lg gap-stack-md z-50">
@@ -45,7 +52,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 flex flex-col px-0">
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           if (item.adminOnly && !isAdmin) return null
           return (
             <NavLink

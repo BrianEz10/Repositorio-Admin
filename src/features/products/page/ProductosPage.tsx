@@ -13,11 +13,13 @@ import { useUnidadesMedida } from '@/features/unidades-medida/hooks/useUnidadesM
 import type { Product, ProductFormData } from '@/features/products/types'
 import ProductsTable from '@/features/products/components/ProductsTable'
 import ProductFormModal from '@/features/products/components/ProductFormModal'
+import StockEditModal from '@/features/products/components/StockEditModal'
 import DeleteConfirmModal from '@/features/products/components/DeleteConfirmModal'
 import { SkeletonTable } from '@/shared/Skeleton'
 export default function ProductosPage() {
   const rol = useAuthStore((s) => s.rol)
   const isAdmin = rol === 'admin'
+  const canEditStock = isAdmin || rol === 'stock'
   const { data: products, isLoading, isError, error, refetch } = useProducts()
   const { data: categories } = useCategories()
   const { data: ingredients } = useIngredients()
@@ -28,6 +30,7 @@ export default function ProductosPage() {
   const toggleMutation = useToggleDisponible()
   const [showForm, setShowForm] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [stockEditProduct, setStockEditProduct] = useState<Product | null>(null)
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null)
   /* ── Handlers ── */
   const handleCreate = () => {
@@ -35,8 +38,19 @@ export default function ProductosPage() {
     setShowForm(true)
   }
   const handleEdit = (product: Product) => {
-    setEditingProduct(product)
-    setShowForm(true)
+    if (rol === 'stock') {
+      setStockEditProduct(product)
+    } else {
+      setEditingProduct(product)
+      setShowForm(true)
+    }
+  }
+  const handleStockSubmit = (stockCantidad: number) => {
+    if (!stockEditProduct) return
+    updateMutation.mutate(
+      { id: stockEditProduct.id, payload: { stockCantidad } },
+      { onSuccess: () => setStockEditProduct(null) },
+    )
   }
   const handleFormSubmit = (data: ProductFormData) => {
     if (editingProduct) {
@@ -167,6 +181,7 @@ export default function ProductosPage() {
       <ProductsTable
         data={products ?? []}
         isAdmin={isAdmin}
+        canEditStock={canEditStock}
         unidades={unidades ?? []}
         onEdit={handleEdit}
         onDelete={setDeletingProduct}
@@ -182,6 +197,15 @@ export default function ProductosPage() {
           onSubmit={handleFormSubmit}
           onClose={() => setShowForm(false)}
           isSubmitting={createMutation.isPending || updateMutation.isPending}
+        />
+      )}
+      {/* Stock Edit Modal */}
+      {stockEditProduct && (
+        <StockEditModal
+          product={stockEditProduct}
+          onSubmit={handleStockSubmit}
+          onClose={() => setStockEditProduct(null)}
+          isSubmitting={updateMutation.isPending}
         />
       )}
       {/* Delete Modal */}

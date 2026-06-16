@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import Layout from '@/shared/Layout'
 import ProtectedRoute from '@/shared/ProtectedRoute'
+import RoleGuard from '@/shared/RoleGuard'
 import NotFoundPage from '@/shared/NotFoundPage'
 import CajeroPage from '@/features/cajero/page/CajeroPage'
 import DashboardPage from '@/features/dashboard/page/DashboardPage'
@@ -34,7 +35,7 @@ const router = createBrowserRouter([
           },
           {
             path: 'dashboard',
-            element: <DashboardPage />,
+            element: <RoleGuard allowedRoles={['admin', 'empleado', 'cajero']}><DashboardPage /></RoleGuard>,
           },
           {
             path: 'productos',
@@ -50,19 +51,19 @@ const router = createBrowserRouter([
           },
           {
             path: 'categorias',
-            element: <CategoriasPage />,
+            element: <RoleGuard allowedRoles={['admin', 'empleado', 'cajero']}><CategoriasPage /></RoleGuard>,
           },
           {
             path: 'pedidos',
-            element: <PedidosPage />,
+            element: <RoleGuard allowedRoles={['admin', 'empleado', 'cajero']}><PedidosPage /></RoleGuard>,
           },
           {
             path: 'cajero',
-            element: <CajeroPage />,
+            element: <RoleGuard allowedRoles={['admin', 'empleado', 'cajero']}><CajeroPage /></RoleGuard>,
           },
           {
             path: 'admin/usuarios',
-            element: <AdminUsersPage />,
+            element: <RoleGuard allowedRoles={['admin']}><AdminUsersPage /></RoleGuard>,
           },
         ],
       },

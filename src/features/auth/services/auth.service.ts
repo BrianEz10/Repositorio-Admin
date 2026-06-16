@@ -7,7 +7,7 @@ function mapRoles(roles: string[]): Role {
   if (normalized.includes('admin')) return 'admin'
   if (normalized.includes('cajero')) return 'cajero'
   if (normalized.includes('pedidos')) return 'empleado'
-  if (normalized.includes('stock')) return 'empleado'
+  if (normalized.includes('stock')) return 'stock'
   if (normalized.includes('empleado')) return 'empleado'
   // fallback por si el rol no coincide con ninguno esperado
   return 'empleado'
