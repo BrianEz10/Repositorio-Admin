@@ -19,7 +19,9 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
     user: {
       id: me.id,
       nombre: me.nombre,
+      apellido: me.apellido,
       email: me.email,
+      celular: me.celular,
     },
     token: tokenData.access_token,
     rol: mapRoles(me.roles),
@@ -32,7 +34,9 @@ export const register = async (data: RegisterRequest): Promise<LoginResponse> =>
     user: {
       id: me.id,
       nombre: me.nombre,
+      apellido: me.apellido,
       email: me.email,
+      celular: me.celular,
     },
     token: tokenData.access_token,
     rol: mapRoles(me.roles),
