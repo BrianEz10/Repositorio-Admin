@@ -63,7 +63,7 @@ export default function OrderDetailPanel({
               <p className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Forma de Pago</p>
               <p className="text-body-md text-on-surface">{FORMA_PAGO_LABELS[order.formaPagoCodigo] ?? order.formaPagoCodigo}</p>
             </div>
-            {order.nombrePara && (
+            {order.nombrePara && order.nombrePara !== "string" && (
               <div>
                 <p className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Para</p>
                 <p className="text-body-md text-on-surface">{order.nombrePara}</p>
