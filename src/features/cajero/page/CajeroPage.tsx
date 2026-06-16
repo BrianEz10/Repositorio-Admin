@@ -5,7 +5,7 @@ import {
   useCreatePedido,
   useCart,
 } from '@/features/cajero/hooks/useCajero'
-import ProductGrid from '@/features/cajero/components/Productgrid'
+import ProductGrid from '@/features/cajero/components/ProductGrid'
 import ProductCustomizerModal from '@/features/cajero/components/ProductCustomizerModal'
 import CartPanel from '@/features/cajero/components/CartPanel'
 import OrderSuccessModal from '@/features/cajero/components/OrderSuccessModal'
