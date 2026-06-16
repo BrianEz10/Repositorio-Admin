@@ -21,10 +21,14 @@ export default function Sidebar() {
   const rol = useAuthStore((s) => s.rol)
   const isAdmin = rol === 'admin'
   const isStock = rol === 'stock'
+  const isPedidos = rol === 'empleado'
+  const isCajero = rol === 'cajero'
 
   const visibleItems = navItems.filter((item) => {
     if (item.adminOnly && !isAdmin) return false
     if (isStock && item.to !== '/productos' && item.to !== '/ingredientes') return false
+    if (isPedidos && item.to !== '/pedidos') return false
+    if (isCajero && item.to !== '/cajero') return false
     return true
   })
 

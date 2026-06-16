@@ -35,31 +35,31 @@ const router = createBrowserRouter([
           },
           {
             path: 'dashboard',
-            element: <RoleGuard allowedRoles={['admin', 'empleado', 'cajero']}><DashboardPage /></RoleGuard>,
+            element: <RoleGuard allowedRoles={['admin']}><DashboardPage /></RoleGuard>,
           },
           {
             path: 'productos',
-            element: <ProductosPage />,
+            element: <RoleGuard allowedRoles={['admin', 'stock']}><ProductosPage /></RoleGuard>,
           },
           {
             path: 'productos/:id',
-            element: <DetalleProductoPage />,
+            element: <RoleGuard allowedRoles={['admin', 'stock']}><DetalleProductoPage /></RoleGuard>,
           },
           {
             path: 'ingredientes',
-            element: <IngredientesPage />,
+            element: <RoleGuard allowedRoles={['admin', 'stock']}><IngredientesPage /></RoleGuard>,
           },
           {
             path: 'categorias',
-            element: <RoleGuard allowedRoles={['admin', 'empleado', 'cajero']}><CategoriasPage /></RoleGuard>,
+            element: <RoleGuard allowedRoles={['admin']}><CategoriasPage /></RoleGuard>,
           },
           {
             path: 'pedidos',
-            element: <RoleGuard allowedRoles={['admin', 'empleado', 'cajero']}><PedidosPage /></RoleGuard>,
+            element: <RoleGuard allowedRoles={['admin', 'empleado']}><PedidosPage /></RoleGuard>,
           },
           {
             path: 'cajero',
-            element: <RoleGuard allowedRoles={['admin', 'empleado', 'cajero']}><CajeroPage /></RoleGuard>,
+            element: <RoleGuard allowedRoles={['admin', 'cajero']}><CajeroPage /></RoleGuard>,
           },
           {
             path: 'admin/usuarios',
