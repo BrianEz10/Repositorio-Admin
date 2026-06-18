@@ -27,7 +27,6 @@ export const useRecentOrders = () =>
   useQuery({
     queryKey: ['recent-orders'],
     queryFn: getRecentOrders,
-    refetchInterval: 15_000,
   })
 export const useCreatePedido = () => {
   const queryClient = useQueryClient()

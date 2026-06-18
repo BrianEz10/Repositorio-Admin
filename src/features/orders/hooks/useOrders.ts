@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import type { Order } from '@/features/orders/types'
 import {
   getOrders,
   getOrderById,
@@ -11,7 +12,6 @@ export const useOrders = () =>
   useQuery({
     queryKey: ['orders'],
     queryFn: getOrders,
-    refetchInterval: 30_000,
   })
 export const useOrder = (id: number) =>
   useQuery({
@@ -38,8 +38,10 @@ export const useUpdateOrderStatus = () => {
       estadoHacia: string
       motivo?: string | null
     }) => updateOrderStatus(id, estadoHacia, motivo),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['orders'] })
+    onSuccess: (data) => {
+      queryClient.setQueryData<Order[]>(['orders'], (old) =>
+        old?.map((o) => (o.id === data.id ? data : o)) ?? []
+      )
       toast().addToast('success', 'Estado del pedido actualizado')
     },
     onError: () => {
