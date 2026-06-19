@@ -1,4 +1,4 @@
-link video : https://drive.google.com/drive/folders/1xywErmmLfCMpkTxa26J6N54uUy7zSkhz?usp=drive_link
+link video : https://drive.google.com/drive/u/0/folders/1jTg-8zm3aMPaCVbcmgSuymi_XiwCBQNa
 
 # admin-app
 
