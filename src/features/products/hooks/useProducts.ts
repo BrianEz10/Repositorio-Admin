@@ -6,8 +6,8 @@ import {
   updateProduct,
   deleteProduct,
   toggleProductDisponible,
-} from '@/features/products/types'
-import type { Product, ProductFormData } from '@/features/products/types'
+} from '@/features/products/services/products.service'
+import type { ProductFormData } from '@/features/products/types'
 import useToastStore from '@/store/toastStore'
 const toast = useToastStore.getState
 export const useProducts = () =>

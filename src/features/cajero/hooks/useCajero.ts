@@ -10,7 +10,7 @@ import useToastStore from '@/store/toastStore'
 import type { CajeroProduct, CartItem, PedidoCreatePayload } from '@/features/cajero/types'
 
 function personalizacionKey(p: number[] | null): string {
-  return p ? [...p].sort().join(',') : 'default'
+  return p ? [...p].sort((a, b) => a - b).join(',') : 'default'
 }
 
 export const useCajeroProducts = () =>
@@ -37,9 +37,9 @@ export const useCreatePedido = () => {
       void queryClient.invalidateQueries({ queryKey: ['recent-orders'] })
       useToastStore.getState().addToast('success', 'Pedido creado correctamente')
     },
-    onError: (error) => {
-      const raw = (error as any)?.response?.data?.detail
-      const msg = typeof raw === 'string' ? raw : raw?.detail ?? 'Error al crear pedido'
+    onError: (error: unknown) => {
+      const err = error as { response?: { data?: { detail?: string } } }
+      const msg = err?.response?.data?.detail ?? 'Error al crear pedido'
       useToastStore.getState().addToast('error', msg)
     },
   })
