@@ -55,7 +55,7 @@ const router = createBrowserRouter([
           },
           {
             path: 'pedidos',
-            element: <RoleGuard allowedRoles={['admin', 'empleado']}><PedidosPage /></RoleGuard>,
+            element: <RoleGuard allowedRoles={['admin', 'pedidos']}><PedidosPage /></RoleGuard>,
           },
           {
             path: 'cajero',

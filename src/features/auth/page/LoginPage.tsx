@@ -17,6 +17,10 @@ export default function LoginPage() {
   useEffect(() => {
     if (user) {
       const rol = useAuthStore.getState().rol
+      if (rol === 'cliente') {
+        window.location.href = 'http://localhost:5174'
+        return
+      }
       navigate(rol === 'cajero' ? '/pedidos' : '/productos', { replace: true })
     }
   }, [user, navigate])
