@@ -5,7 +5,7 @@ interface Props {
   productos: ProductoVendido[]
 }
 
-const TOP_COLORS = ['#eab308', '#94a3b8', '#cd7f32', '#ffb3ae', '#60dac4']
+const TOP_COLORS = ['#eab308', '#94a3b8', '#cd7f32', 'var(--color-primary)', 'var(--color-tertiary)']
 
 export default function ProductosTop({ productos }: Props) {
   const sorted = [...productos].sort((a, b) => b.totalVendido - a.totalVendido).slice(0, 10)
