@@ -28,13 +28,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-3 cursor-pointer">
-          <div className="w-10 h-10 bg-surface-variant flex items-center justify-center overflow-hidden border border-outline-variant/20">
-            <span className="material-symbols-outlined text-on-surface-variant">person</span>
-          </div>
-        </div>
-      </div>
+
     </header>
   )
 }
