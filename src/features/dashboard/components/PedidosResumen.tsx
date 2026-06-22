@@ -7,8 +7,8 @@ const ESTADO_COLORS: Record<string, string> = {
   PENDIENTE: '#eab308',
   CONFIRMADO: '#6366f1',
   EN_PREP: '#06b6d4',
-  ENTREGADO: '#22c55e',
-  CANCELADO: '#ef4444',
+  ENTREGADO: 'var(--color-tertiary)',
+  CANCELADO: 'var(--color-error)',
 }
 
 const ESTADO_LABELS: Record<string, string> = {
@@ -19,7 +19,7 @@ const ESTADO_LABELS: Record<string, string> = {
   CANCELADO: 'Cancelados',
 }
 
-const PAGO_COLORS = ['#ffb3ae', '#60dac4', '#6366f1', '#eab308']
+const PAGO_COLORS = ['var(--color-primary)', 'var(--color-tertiary)', '#6366f1', '#eab308']
 
 interface Props {
   pedidosPorEstado: DashboardResponse['pedidosPorEstado']

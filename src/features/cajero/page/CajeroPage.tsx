@@ -47,8 +47,8 @@ export default function CajeroPage() {
       setSelectedPago('')
       setClienteNombre('')
     } catch (error) {
-      const raw = (error as any)?.response?.data?.detail
-      const msg = typeof raw === 'string' ? raw : raw?.detail ?? 'Error al crear pedido'
+      const err = error as { response?: { data?: { detail?: string } } }
+      const msg = err?.response?.data?.detail ?? 'Error al crear pedido'
       useToastStore.getState().addToast('error', msg)
     }
   }

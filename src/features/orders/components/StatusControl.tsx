@@ -20,7 +20,7 @@ export default function StatusControl({
   onStatusChange,
 }: StatusControlProps) {
   const rol = useAuthStore((s) => s.rol)
-  const canChange = rol === 'admin' || rol === 'cajero' || rol === 'empleado'
+  const canChange = rol === 'admin' || rol === 'cajero' || rol === 'pedidos'
   const [showMotivo, setShowMotivo] = useState(false)
   const [motivo, setMotivo] = useState('')
   if (!canChange) return null
