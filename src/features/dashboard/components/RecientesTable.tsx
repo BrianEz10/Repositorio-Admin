@@ -1,4 +1,5 @@
 import type { PedidoReciente } from '@/features/dashboard/types'
+import { formatOrderDateTime } from '@/shared/formatDate'
 
 const STATUS_STYLES: Record<string, string> = {
   PENDIENTE: 'bg-warning/15 text-warning',
@@ -57,12 +58,7 @@ export default function RecientesTable({ pedidos }: Props) {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-label-sm text-on-surface-variant/70">
-                  {new Date(p.createdAt).toLocaleDateString('es-AR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {formatOrderDateTime(p.createdAt)}
                 </td>
               </tr>
             ))}

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import type { Order } from '@/features/orders/types'
 import ColumnOverflowModal from './ColumnOverflowModal'
+import { formatOrderTime } from '@/shared/formatDate'
 const KANBAN_COLUMNS = [
   {
     key: 'PENDIENTE',
@@ -112,10 +113,7 @@ export default function OrdersKanban({
                             #ORD-{String(order.id).padStart(4, '0')}
                           </span>
                           <span className="text-on-surface-variant text-[10px] uppercase font-medium">
-                            {new Date(order.creadoEn).toLocaleTimeString('es-AR', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
+                            {formatOrderTime(order.creadoEn)}
                           </span>
                         </div>
                         <h4 className="text-body-md text-on-surface font-medium mb-1">
