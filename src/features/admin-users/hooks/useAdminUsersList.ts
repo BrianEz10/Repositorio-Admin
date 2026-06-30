@@ -3,6 +3,6 @@ import { getUsers } from '@/features/admin-users/services/admin-users.service'
 
 export const useAdminUsers = (params?: { page?: number; size?: number; rol?: string }) =>
   useQuery({
-    queryKey: ['admin-users', params],
+    queryKey: ['admin-users', params?.page, params?.size, params?.rol],
     queryFn: () => getUsers(params),
   })
