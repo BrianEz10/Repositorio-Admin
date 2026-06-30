@@ -3,6 +3,7 @@ import { FORMA_PAGO_LABELS } from '@/features/orders/types'
 import StatusBadge from '@/features/orders/components/StatusBadge'
 import StatusControl from '@/features/orders/components/StatusControl'
 import { useAdminDireccion } from '@/features/orders/hooks/useOrders'
+import { formatOrderDate, formatOrderTime } from '@/shared/formatDate'
 interface OrderDetailPanelProps {
   order: Order
   onClose: () => void
@@ -14,7 +15,6 @@ export default function OrderDetailPanel({
   onStatusChange,
 }: OrderDetailPanelProps) {
   const { data: direccion } = useAdminDireccion(order.direccionId)
-  const createdDate = new Date(order.creadoEn)
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       {/* Backdrop */}
@@ -28,16 +28,9 @@ export default function OrderDetailPanel({
               #ORD-{String(order.id).padStart(4, '0')}
             </h3>
             <p className="text-label-sm text-on-surface-variant mt-0.5">
-              {createdDate.toLocaleDateString('es-AR', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-              })}{' '}
+              {formatOrderDate(order.creadoEn)}{' '}
               a las{' '}
-              {createdDate.toLocaleTimeString('es-AR', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
+              {formatOrderTime(order.creadoEn)}
             </p>
           </div>
           <button

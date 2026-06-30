@@ -12,6 +12,7 @@ import {
 import type { Order, OrderStatus } from '@/features/orders/types'
 import { STATUS_LABELS, ORDER_STATUSES } from '@/features/orders/types'
 import StatusBadge from '@/features/orders/components/StatusBadge'
+import { formatOrderTime } from '@/shared/formatDate'
 
 const columnHelper = createColumnHelper<Order>()
 
@@ -91,17 +92,11 @@ export default function OrdersTable({
       }),
       columnHelper.accessor('creadoEn', {
         header: 'Hora',
-        cell: (info) => {
-          const date = new Date(info.getValue())
-          return (
-            <span className="text-on-surface-variant text-label-sm">
-              {date.toLocaleTimeString('es-AR', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </span>
-          )
-        },
+        cell: (info) => (
+          <span className="text-on-surface-variant text-label-sm">
+            {formatOrderTime(info.getValue())}
+          </span>
+        ),
         size: 80,
       }),
     ],
