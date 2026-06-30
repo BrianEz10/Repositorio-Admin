@@ -75,5 +75,5 @@ export function useOrderStatusWS() {
     }
   }, [connect])
 
-  return useWsStore
+  return useWsStore()
 }

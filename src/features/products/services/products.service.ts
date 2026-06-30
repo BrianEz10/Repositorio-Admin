@@ -72,23 +72,37 @@ export const createProduct = async (payload: ProductFormData): Promise<Product> 
   return toCamelCase(data)
 }
 
+function toSnakePartial(payload: Partial<ProductFormData>): Record<string, unknown> {
+  const result: Record<string, unknown> = {}
+  if (payload.nombre !== undefined) result.nombre = payload.nombre
+  if (payload.descripcion !== undefined) result.descripcion = payload.descripcion
+  if (payload.precioBase !== undefined) result.precio_base = payload.precioBase
+  if (payload.imagenesUrl !== undefined) result.imagenes_url = payload.imagenesUrl
+  if (payload.stockCantidad !== undefined) result.stock_cantidad = payload.stockCantidad
+  if (payload.disponible !== undefined) result.disponible = payload.disponible
+  if (payload.unidadVentaId !== undefined) result.unidad_venta_id = payload.unidadVentaId
+  if (payload.categorias !== undefined) {
+    result.categorias = payload.categorias.map((c) => ({
+      categoria_id: c.categoriaId,
+      es_principal: c.esPrincipal,
+    }))
+  }
+  if (payload.ingredientes !== undefined) {
+    result.ingredientes = payload.ingredientes.map((i) => ({
+      ingrediente_id: i.ingredienteId,
+      cantidad: i.cantidad,
+      unidad_medida_id: i.unidadMedidaId,
+      es_removible: i.esRemovible,
+    }))
+  }
+  return result
+}
+
 export const updateProduct = async (
   id: number,
   payload: Partial<ProductFormData>,
 ): Promise<Product> => {
-  const snakePayload =
-    payload.categorias !== undefined || payload.ingredientes !== undefined
-      ? toSnakeCase(payload as ProductFormData)
-      : {
-          nombre: payload.nombre,
-          descripcion: payload.descripcion,
-          precio_base: (payload as any).precioBase,
-          imagenes_url: (payload as any).imagenesUrl,
-          stock_cantidad: (payload as any).stockCantidad,
-          disponible: payload.disponible,
-          unidad_venta_id: (payload as any).unidadVentaId,
-        }
-  const { data } = await api.put<any>(`/productos/${id}`, snakePayload)
+  const { data } = await api.put<any>(`/productos/${id}`, toSnakePartial(payload))
   return toCamelCase(data)
 }
 
